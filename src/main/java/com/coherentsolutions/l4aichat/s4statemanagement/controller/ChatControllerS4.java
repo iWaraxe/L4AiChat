@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/s4/chat")
-public class ChatController {
+public class ChatControllerS4 {
 
     private final ConversationService conversationService;
 
-    public ChatController(ConversationService conversationService) {
+    public ChatControllerS4(ConversationService conversationService) {
         this.conversationService = conversationService;
     }
 
