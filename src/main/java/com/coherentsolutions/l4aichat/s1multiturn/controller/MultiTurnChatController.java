@@ -1,4 +1,4 @@
-package com.coherentsolutions.l4aichat.s1multiturn;
+package com.coherentsolutions.l4aichat.s1multiturn.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;

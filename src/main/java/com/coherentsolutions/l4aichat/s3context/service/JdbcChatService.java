@@ -1,4 +1,4 @@
-package com.coherentsolutions.l4aichat.s3context;
+package com.coherentsolutions.l4aichat.s3context.service;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;

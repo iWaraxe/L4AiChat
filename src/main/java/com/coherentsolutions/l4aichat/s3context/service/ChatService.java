@@ -1,4 +1,4 @@
-package com.coherentsolutions.l4aichat.s3context;
+package com.coherentsolutions.l4aichat.s3context.service;
 
 import org.springframework.ai.chat.messages.Message;
 import java.util.List;

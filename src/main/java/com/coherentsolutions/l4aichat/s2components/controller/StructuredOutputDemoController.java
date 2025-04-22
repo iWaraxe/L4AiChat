@@ -1,4 +1,4 @@
-package com.coherentsolutions.l4aichat.s2components;
+package com.coherentsolutions.l4aichat.s2components.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;

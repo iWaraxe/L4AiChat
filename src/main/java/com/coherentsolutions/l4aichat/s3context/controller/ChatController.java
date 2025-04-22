@@ -1,5 +1,9 @@
-package com.coherentsolutions.l4aichat.s3context;
+package com.coherentsolutions.l4aichat.s3context.controller;
 
+import com.coherentsolutions.l4aichat.s3context.dto.ChatRequest;
+import com.coherentsolutions.l4aichat.s3context.dto.ChatResponse;
+import com.coherentsolutions.l4aichat.s3context.service.ChatService;
+import com.coherentsolutions.l4aichat.s3context.service.InMemoryChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class L4AiChatApplication {
+public class AiChatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(L4AiChatApplication.class, args);
+        SpringApplication.run(AiChatApplication.class, args);
     }
 
 }
