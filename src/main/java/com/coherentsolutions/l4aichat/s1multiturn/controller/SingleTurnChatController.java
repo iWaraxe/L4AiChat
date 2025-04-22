@@ -57,7 +57,7 @@ public class SingleTurnChatController {
 
         // Use the fluent API of ChatClient
         String response = this.chatClient.prompt()
-                .system("You are a helpful AI assistant.")
+                .system("You are a helpful AI assistant who writes in verses.")
                 .user(userMessage)
                 .call()
                 .content();
