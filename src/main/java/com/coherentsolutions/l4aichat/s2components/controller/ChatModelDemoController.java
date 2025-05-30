@@ -6,7 +6,7 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 import java.util.*;
 
 /**
- * This controller demonstrates the recommended ChatClient-based usage in Spring AI M7
+ * This controller demonstrates the recommended ChatClient-based usage in Spring AI 1.0.0
  */
 @RestController
 @RequestMapping("/api/s2/model")
@@ -80,7 +80,7 @@ public class ChatModelDemoController {
         // maxCompletionTokens is recommended for OpenAI (but maxTokens is still accepted)
         Integer maxTokens = (Integer) request.getOrDefault("maxTokens", 150);
 
-        ChatOptions options = ChatOptions.builder()
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
                 .temperature(temperature)
                 .maxTokens(maxTokens)
                 .build();

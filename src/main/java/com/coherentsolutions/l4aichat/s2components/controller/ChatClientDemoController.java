@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This controller demonstrates the fluent ChatClient API for M7
+ * This controller demonstrates the fluent ChatClient API for Spring AI 1.0.0
  */
 @RestController
 @RequestMapping("/api/s2/client")
@@ -96,7 +96,7 @@ public class ChatClientDemoController {
                 .chatResponse();
 
         Map<String, Object> responseData = new HashMap<>();
-        // AssistantMessage text is retrieved via getText() in M7
+        // AssistantMessage text is retrieved via getText() in Spring AI 1.0.0
         responseData.put("content",  chatResponse.getResult().getOutput().getText());
         responseData.put("messageType", chatResponse.getResult().getOutput().getMessageType());
 

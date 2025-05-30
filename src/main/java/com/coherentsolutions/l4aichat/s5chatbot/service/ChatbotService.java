@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatbotService {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatbotService.class);
-    // M7 typically uses: chat_memory_conversation_id
-    private static final String CONVERSATION_ID_PARAM = "chat_memory_conversation_id";
-    // M7 typically uses: chat_memory_response_size
-    private static final String MEMORY_SIZE_PARAM = "chat_memory_response_size";
+    // Spring AI 1.0.0 uses constants
+    private static final String CONVERSATION_ID_PARAM = ChatMemory.CONVERSATION_ID;
 
     private static final int MAX_CONVERSATION_TOKENS = 4000;
 
@@ -30,7 +30,10 @@ public class ChatbotService {
     private final ConcurrentHashMap<String, Long> lastInteractionTimes;
 
     public ChatbotService(ChatClient.Builder chatClientBuilder) {
-        this.chatMemory = new InMemoryChatMemory();
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(new InMemoryChatMemoryRepository())
+                .maxMessages(20)
+                .build();
         this.lastInteractionTimes = new ConcurrentHashMap<>();
 
         // Create ChatClient with memory and custom system message
@@ -40,10 +43,10 @@ public class ChatbotService {
                     Be friendly and conversational while keeping responses informative.
                     If you don't know something, admit it rather than making up information.
                     """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory).build())
                 .build();
 
-        logger.info("ChatbotService initialized with InMemoryChatMemory");
+        logger.info("ChatbotService initialized with MessageWindowChatMemory and InMemoryChatMemoryRepository");
     }
 
     /**
@@ -79,9 +82,7 @@ public class ChatbotService {
             // Use ChatClient to process message
             String response = this.chatClient.prompt()
                     .user(userMessage)
-                    .advisors(a -> a
-                            .param(CONVERSATION_ID_PARAM, finalConvId)
-                            .param(MEMORY_SIZE_PARAM, MAX_CONVERSATION_TOKENS))
+                    .advisors(a -> a.param(CONVERSATION_ID_PARAM, finalConvId))
                     .call()
                     .content();
 
@@ -97,6 +98,38 @@ public class ChatbotService {
     }
 
     /**
+     * Process a user message with streaming response
+     *
+     * @param conversationId The conversation identifier
+     * @param userMessage The user's message
+     * @return A Flux of response chunks
+     */
+    public Flux<String> streamMessage(String conversationId, String userMessage) {
+        try {
+            if (conversationId == null || conversationId.isEmpty()) {
+                conversationId = createNewConversation();
+            }
+
+            lastInteractionTimes.put(conversationId, System.currentTimeMillis());
+
+            // Store it in a final variable so it's effectively final in the lambda
+            final String finalConvId = conversationId;
+
+            // Use ChatClient streaming to process message
+            return this.chatClient.prompt()
+                    .user(userMessage)
+                    .advisors(a -> a.param(CONVERSATION_ID_PARAM, finalConvId))
+                    .stream()
+                    .content();
+
+        } catch (Exception e) {
+            logger.error("Error streaming message for conversation {}: {}",
+                    conversationId, e.getMessage(), e);
+            return Flux.error(new ChatbotException("Failed to stream your message: " + e.getMessage(), e));
+        }
+    }
+
+    /**
      * Get the conversation history for a specific conversation
      *
      * @param conversationId The conversation identifier
@@ -107,8 +140,8 @@ public class ChatbotService {
             throw new ChatbotException("Invalid conversation ID");
         }
 
-        // In M7, we do .get(conversationId, -1) instead of getMessages(...)
-        return this.chatMemory.get(conversationId, -1);
+        // In Spring AI 1.0.0, we use .get(conversationId)
+        return this.chatMemory.get(conversationId);
     }
 
     /**

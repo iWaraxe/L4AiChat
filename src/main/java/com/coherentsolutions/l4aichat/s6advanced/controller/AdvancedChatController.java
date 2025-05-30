@@ -2,7 +2,7 @@ package com.coherentsolutions.l4aichat.s6advanced.controller;
 
 import com.coherentsolutions.l4aichat.s6advanced.service.ChatService;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,17 +71,14 @@ public class AdvancedChatController {
 
         String userMessage = request.get("message");
 
-        // Build ChatOptions using a fresh builder
-        ChatOptions.Builder optionsBuilder = ChatOptions.builder()
+        // Build OpenAiChatOptions using a fresh builder
+        OpenAiChatOptions.Builder optionsBuilder = OpenAiChatOptions.builder()
                 .temperature(temperature)
                 .maxTokens(maxTokens);
         if (topP != null) {
             optionsBuilder.topP(topP);
         }
-        if (topK != null) {
-            optionsBuilder.topK(topK);
-        }
-        ChatOptions chatOptions = optionsBuilder.build();
+        OpenAiChatOptions chatOptions = optionsBuilder.build();
 
         String response = chatService.processMessageWithOptions(userMessage, chatOptions, conversationId);
 

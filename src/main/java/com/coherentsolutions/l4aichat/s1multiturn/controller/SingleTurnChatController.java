@@ -1,7 +1,7 @@
 package com.coherentsolutions.l4aichat.s1multiturn.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
@@ -78,7 +78,7 @@ public class SingleTurnChatController {
         // Override model options for this specific request
         String response = this.chatClient.prompt()
                 .user(userMessage)
-                .options(ChatOptions.builder()
+                .options(OpenAiChatOptions.builder()
                         .temperature(0.1)
                         .maxTokens(150)
                         .build())    // Limiting response length

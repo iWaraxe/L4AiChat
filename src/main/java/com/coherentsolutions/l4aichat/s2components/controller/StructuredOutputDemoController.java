@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This controller demonstrates structured output conversion methods for M7
+ * This controller demonstrates structured output conversion methods for Spring AI 1.0.0
  */
 @RestController
 @RequestMapping("/api/structured")

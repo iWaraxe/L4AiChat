@@ -3,7 +3,6 @@ package com.coherentsolutions.l4aichat.s3context.controller;
 import com.coherentsolutions.l4aichat.s3context.dto.ChatRequest;
 import com.coherentsolutions.l4aichat.s3context.dto.ChatResponse;
 import com.coherentsolutions.l4aichat.s3context.service.ChatService;
-import com.coherentsolutions.l4aichat.s3context.service.InMemoryChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +17,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @Autowired
-    public ChatController(InMemoryChatService chatService) {
-        // By default, use the InMemoryChatService
-        // When profiles are activated, Spring will inject the appropriate implementation
+    public ChatController(ChatService chatService) {
+        // Spring will inject the appropriate implementation based on active profile
         this.chatService = chatService;
     }
 

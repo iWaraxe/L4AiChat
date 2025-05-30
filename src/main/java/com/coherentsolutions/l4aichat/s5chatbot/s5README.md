@@ -1,12 +1,12 @@
-# Spring AI Chatbot (M7) – README
+# Spring AI Chatbot (1.0.0) – README
 
-This project demonstrates a stateful chatbot built with **Spring Boot** and **Spring AI 1.0.0-M7**. The chatbot maintains conversation context across multiple messages, allowing users to have more natural, multi-turn dialogues.
+This project demonstrates a stateful chatbot built with **Spring Boot** and **Spring AI 1.0.0**. The chatbot maintains conversation context across multiple messages, allowing users to have more natural, multi-turn dialogues.
 
 ## Features
 
 - **RESTful** API endpoints for sending messages, creating/deleting conversations, and streaming responses
 - **Stateful** conversation context management with Spring AI’s `ChatMemory` and `MessageChatMemoryAdvisor`
-- **InMemory** or **JDBC** storage for chat history
+- **InMemoryChatMemoryRepository** for chat history storage
 - **Validation & Error Handling** via Spring Boot’s Bean Validation and a global exception handler
 - **CORS** configuration for cross-origin requests
 - **Simple** front-end integration (HTML/JS) for demo
@@ -39,10 +39,10 @@ java -jar target/your-chatbot.jar
 By default, it starts on port 8080.
 
 	5.	Test in your browser or with a tool like Postman:
-	•	POST /api/chat/new to create a new conversation
-	•	POST /api/chat/{conversationId} to send a message
-	•	DELETE /api/chat/{conversationId} to clear conversation history
-	•	POST /api/chat/stream/{conversationId} for streaming responses
+	•	POST /api/s5/chat/new to create a new conversation
+	•	POST /api/s5/chat/{conversationId} to send a message
+	•	DELETE /api/s5/chat/{conversationId} to clear conversation history
+	•	POST /api/s5/chat/stream/{conversationId} for streaming responses
 
 How It Works
 1.	ChatClient & Memory

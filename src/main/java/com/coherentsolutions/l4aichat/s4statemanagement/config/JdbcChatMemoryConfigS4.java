@@ -1,12 +1,10 @@
 package com.coherentsolutions.l4aichat.s4statemanagement.config;
 
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemoryConfig;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Configuration for database-backed chat memory.
@@ -21,19 +19,13 @@ public class JdbcChatMemoryConfigS4 {
      * Creates a JDBC-backed chat memory implementation.
      * This will automatically create the necessary database table.
      *
-     * @param jdbcTemplate The Spring JDBC template
      * @return A persistent chat memory implementation
      */
     @Bean
-    public ChatMemory chatMemory(JdbcTemplate jdbcTemplate) {
-
-        // 1) Build the config
-        JdbcChatMemoryConfig config = JdbcChatMemoryConfig.builder()
-                .jdbcTemplate(jdbcTemplate)
-                // .initializeSchema(true) // if you want auto schema creation
+    public ChatMemory chatMemory() {
+        // Spring AI 1.0.0 will auto-configure the JDBC repository when the starter is present
+        return MessageWindowChatMemory.builder()
+                .maxMessages(20)
                 .build();
-
-        // 2) Use create(...) to build the JdbcChatMemory in M7
-        return JdbcChatMemory.create(config);
     }
 }

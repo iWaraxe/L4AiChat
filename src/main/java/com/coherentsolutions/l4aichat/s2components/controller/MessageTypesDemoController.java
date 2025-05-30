@@ -111,11 +111,9 @@ public class MessageTypesDemoController {
                 new ByteArrayResource(file.getBytes())
         );
 
-        // Create a UserMessage with both text and media
-        UserMessage userMessage = new UserMessage(question, List.of(media));
-
+        // Use the fluent API to send text with media
         String response = this.chatClient.prompt()
-                .messages(userMessage)
+                .user(u -> u.text(question).media(media))
                 .call()
                 .content();
 

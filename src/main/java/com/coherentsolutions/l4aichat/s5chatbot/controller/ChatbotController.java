@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
-import java.time.Duration;
-
 @RestController
 @RequestMapping("/api/s5/chat")
 public class ChatbotController {
@@ -58,11 +56,11 @@ public class ChatbotController {
     }
 
     /**
-     * Stream a message response character by character
+     * Stream a message response using Spring AI native streaming
      *
      * @param conversationId The conversation identifier
      * @param request The chat request containing the user's message
-     * @return A streaming response of characters
+     * @return A streaming response from the AI model
      */
     @PostMapping(
             value = "/stream/{conversationId}",
@@ -75,12 +73,8 @@ public class ChatbotController {
         logger.info("Received streaming request in conversation {}: {}",
                 conversationId, request.getMessage());
 
-        // Get the full response
-        String fullResponse = chatbotService.processMessage(conversationId, request.getMessage());
-
-        // Convert to character stream with delays
-        return Flux.fromArray(fullResponse.split(""))
-                .delayElements(Duration.ofMillis(50));
+        // Use native Spring AI streaming
+        return chatbotService.streamMessage(conversationId, request.getMessage());
     }
 
     /**

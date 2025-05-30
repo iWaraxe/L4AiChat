@@ -4,7 +4,7 @@
 
 Welcome to our exploration of Spring AI's Chat API components. This lecture is designed to give you a comprehensive understanding of how the Spring AI module enables integration with Large Language Models (LLMs) through an elegant and extensible API layer.
 
-Spring AI M7 provides a rich set of abstractions that allow developers to interact with various LLM providers while maintaining a consistent programming model. Let's dive into the architecture and design principles that make this possible.
+Spring AI 1.0.0 provides a rich set of abstractions that allow developers to interact with various LLM providers while maintaining a consistent programming model. Let's dive into the architecture and design principles that make this possible.
 
 ## Core Components Overview
 
@@ -111,7 +111,7 @@ The `Content` interface provides access to the textual content and metadata:
 
 ```java
 public interface Content {
-    String getText();
+    String getContent();
     Map<String, Object> getMetadata();
 }
 ```
@@ -251,4 +251,4 @@ Use **ChatClient** for typical application dev; use **ChatModel** only if you ne
 
 ## Conclusion
 
-With M7, Spring AI’s Chat API is more stable and consistent across providers. You can build powerful applications that combine **simple, fluent prompt building** with **structured output**—all while retaining the flexibility to switch among various LLM backends. By following the best practices outlined here, you’ll be on your way to building robust, AI-enhanced Spring applications.
+With Spring AI 1.0.0, Spring AI’s Chat API is more stable and consistent across providers. You can build powerful applications that combine **simple, fluent prompt building** with **structured output**—all while retaining the flexibility to switch among various LLM backends. By following the best practices outlined here, you’ll be on your way to building robust, AI-enhanced Spring applications.

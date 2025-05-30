@@ -1,13 +1,13 @@
 # Spring AI Chatbot with Memory
 
-This project demonstrates how to build a chatbot using Spring Boot and **Spring AI** (version 1.0.0-M7) with the ability to maintain conversation context across multiple messages.
+This project demonstrates how to build a chatbot using Spring Boot and **Spring AI** (version 1.0.0) with the ability to maintain conversation context across multiple messages.
 
 ## Key Features
 
 - Contextual conversations using **Spring AI ChatMemory**
 - Two memory implementations:
-    - **InMemoryChatMemory** – Stores conversations in memory (default)
-    - **JdbcChatMemory** – Stores conversations in a relational database (H2 for demo)
+    - **InMemoryChatMemoryRepository** – Stores conversations in memory (default)
+    - **JdbcChatMemoryRepository** – Stores conversations in a relational database (H2 for demo)
 - RESTful API for chat interactions
 - Simple web interface
 
@@ -35,7 +35,7 @@ This project demonstrates how to build a chatbot using Spring Boot and **Spring 
 
 ## Memory Implementation Profiles
 
-By default, the application uses `InMemoryChatMemory`. To switch to a JDBC implementation, activate the jdbc profile:
+By default, the application uses `InMemoryChatMemoryRepository`. To switch to a JDBC implementation, activate the jdbc profile:
     ```
     java -jar target/chatbot-demo-0.0.1-SNAPSHOT.jar --spring.profiles.active=jdbc
     ```
@@ -69,10 +69,10 @@ In that case, you’ll need to configure your database properties in application
 
 ## Tradeoffs Between Memory Implementations
 
-### InMemoryChatMemory
+### InMemoryChatMemoryRepository
 •	Pros: Simple, no extra dependencies, fast
 •	Cons: Data is lost on application restart, not production-ready
 
-### JdbcChatMemory
+### JdbcChatMemoryRepository
 •	Pros: Persistent storage, works with any SQL DB, more robust than in-memory
 •	Cons: Potential performance considerations with large histories
