@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(./mvnw clean:*)",
+      "Bash(rm:*)",
+      "Bash(./mvnw dependency:purge-local-repository:*)",
+      "Bash(./mvnw compile:*)",
+      "Bash(grep:*)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn clean:*)",
+      "Bash(git add:*)",
+      "Bash(mvn test:*)",
+      "Bash(mkdir:*)",
+      "Bash(git push:*)",
+      "Bash(find:*)"
+    ],
+    "deny": []
+  }
+}
