@@ -114,7 +114,7 @@ public class ChatMessageDemoController {
         String responseWithContext = this.chatClient.prompt()
                 .system("You are a helpful AI assistant.")
                 .messages(List.of(
-                        new UserMessage("My name is John and I'm working on a Java project."),
+                        new UserMessage("My name is John and I'm working on a Spring Boot project."),
                         new AssistantMessage("Hello John! I'd be happy to help with your Java project. What kind of assistance do you need?")
                 ))
                 .user(userMessage)
