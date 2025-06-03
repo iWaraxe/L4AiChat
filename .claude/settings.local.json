@@ -13,7 +13,9 @@
       "Bash(mvn test:*)",
       "Bash(mkdir:*)",
       "Bash(git push:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(./mvnw test:*)"
     ],
     "deny": []
   }
