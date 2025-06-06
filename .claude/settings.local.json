@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw:*)",
+      "WebFetch(domain:docs.spring.io)",
+      "Bash(mvn:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}
