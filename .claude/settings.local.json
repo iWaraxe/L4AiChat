@@ -15,7 +15,9 @@
       "Bash(git push:*)",
       "Bash(find:*)",
       "Bash(git commit:*)",
-      "Bash(./mvnw test:*)"
+      "Bash(./mvnw test:*)",
+      "Bash(git clean:*)",
+      "Bash(git branch:*)"
     ],
     "deny": []
   }
