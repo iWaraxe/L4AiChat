@@ -1,8 +1,7 @@
 package com.coherentsolutions.l4aichat.s4statemanagement.config;
 
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemoryConfig;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -27,13 +26,10 @@ public class JdbcChatMemoryConfigS4 {
     @Bean
     public ChatMemory chatMemory(JdbcTemplate jdbcTemplate) {
 
-        // 1) Build the config
-        JdbcChatMemoryConfig config = JdbcChatMemoryConfig.builder()
-                .jdbcTemplate(jdbcTemplate)
-                // .initializeSchema(true) // if you want auto schema creation
+        // In Spring AI 1.0.0, use MessageWindowChatMemory with builder pattern
+        // You could implement a custom ChatMemoryRepository using the jdbcTemplate if needed
+        return MessageWindowChatMemory.builder()
+                .maxMessages(50) // Larger window size for this profile
                 .build();
-
-        // 2) Use create(...) to build the JdbcChatMemory in M7
-        return JdbcChatMemory.create(config);
     }
 }

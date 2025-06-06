@@ -1,12 +1,12 @@
 package com.coherentsolutions.l4aichat.s5chatbot;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for the s5 chatbot features.
+ * Note: This is now just a configuration class, not a main application.
+ */
+@Configuration
 public class SpringAiChatbotApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(SpringAiChatbotApplication.class, args);
-    }
+    // Removed main method - this is now just a configuration class
 }

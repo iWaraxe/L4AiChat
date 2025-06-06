@@ -3,7 +3,7 @@ package com.coherentsolutions.l4aichat.s1multiturn;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,19 +25,22 @@ public class MultiTurnChatController {
     private final ChatMemory chatMemory;
 
     // Define constant for the conversation ID parameter name
-    private static final String CHAT_MEMORY_CONVERSATION_ID_KEY = "conversation_id";
+    private static final String CHAT_MEMORY_CONVERSATION_ID_KEY = ChatMemory.CONVERSATION_ID;
 
     // Track conversation IDs for demonstration purposes
     private final ConcurrentHashMap<String, String> conversations = new ConcurrentHashMap<>();
 
     public MultiTurnChatController(ChatClient.Builder chatClientBuilder) {
         // Initialize ChatMemory to store conversation history
-        this.chatMemory = new InMemoryChatMemory();
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .maxMessages(10)
+                .build();
 
         // Build the ChatClient with the MessageChatMemoryAdvisor
         // This advisor automatically maintains conversation history
         this.chatClient = chatClientBuilder
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
     }
 
@@ -102,7 +105,7 @@ public class MultiTurnChatController {
      */
     @GetMapping("/history/{conversationId}")
     public List<Message> getConversationHistory(@PathVariable String conversationId) {
-        return chatMemory.get(conversationId,-1);
+        return chatMemory.get(conversationId);
     }
 
     /**

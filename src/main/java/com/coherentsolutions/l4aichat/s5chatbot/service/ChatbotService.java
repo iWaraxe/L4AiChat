@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +18,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatbotService {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatbotService.class);
-    // M7 typically uses: chat_memory_conversation_id
-    private static final String CONVERSATION_ID_PARAM = "chat_memory_conversation_id";
-    // M7 typically uses: chat_memory_response_size
-    private static final String MEMORY_SIZE_PARAM = "chat_memory_response_size";
-
-    private static final int MAX_CONVERSATION_TOKENS = 4000;
+    // Spring AI 1.0.0 uses ChatMemory.CONVERSATION_ID
+    private static final String CONVERSATION_ID_PARAM = ChatMemory.CONVERSATION_ID;
 
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
     private final ConcurrentHashMap<String, Long> lastInteractionTimes;
 
     public ChatbotService(ChatClient.Builder chatClientBuilder) {
-        this.chatMemory = new InMemoryChatMemory();
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .maxMessages(20)
+                .build();
         this.lastInteractionTimes = new ConcurrentHashMap<>();
 
         // Create ChatClient with memory and custom system message
@@ -40,10 +38,11 @@ public class ChatbotService {
                     Be friendly and conversational while keeping responses informative.
                     If you don't know something, admit it rather than making up information.
                     """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
 
-        logger.info("ChatbotService initialized with InMemoryChatMemory");
+        logger.info("ChatbotService initialized with MessageWindowChatMemory");
     }
 
     /**
@@ -80,8 +79,7 @@ public class ChatbotService {
             String response = this.chatClient.prompt()
                     .user(userMessage)
                     .advisors(a -> a
-                            .param(CONVERSATION_ID_PARAM, finalConvId)
-                            .param(MEMORY_SIZE_PARAM, MAX_CONVERSATION_TOKENS))
+                            .param(CONVERSATION_ID_PARAM, finalConvId))
                     .call()
                     .content();
 
@@ -107,8 +105,8 @@ public class ChatbotService {
             throw new ChatbotException("Invalid conversation ID");
         }
 
-        // In M7, we do .get(conversationId, -1) instead of getMessages(...)
-        return this.chatMemory.get(conversationId, -1);
+        // In Spring AI 1.0.0, ChatMemory.get() only takes conversation ID
+        return this.chatMemory.get(conversationId);
     }
 
     /**

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * REST controller for the chatbot
  */
-@RestController
+@RestController("s3ChatController")
 @RequestMapping("/api/s3/chat")
 public class ChatController {
 

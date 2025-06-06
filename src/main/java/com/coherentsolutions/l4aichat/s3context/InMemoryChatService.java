@@ -3,7 +3,7 @@ package com.coherentsolutions.l4aichat.s3context;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class InMemoryChatService implements ChatService {
 
-    private static final int MAX_HISTORY_TOKENS = 2000;
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
     private final ConcurrentHashMap<String, Long> lastInteractionTimes = new ConcurrentHashMap<>();
 
     public InMemoryChatService(ChatClient.Builder chatClientBuilder) {
         // Initialize InMemoryChatMemory
-        this.chatMemory = new InMemoryChatMemory();
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .maxMessages(10)
+                .build();
 
         // Build the ChatClient with our memory advisor and a default system prompt
         this.chatClient = chatClientBuilder
@@ -32,7 +33,8 @@ public class InMemoryChatService implements ChatService {
                 You are a friendly and helpful AI assistant that remembers conversation context.
                 Be concise in your responses while still being helpful and accurate.
                 """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
     }
 
@@ -52,8 +54,7 @@ public class InMemoryChatService implements ChatService {
         return this.chatClient.prompt()
                 .user(userMessage)
                 .advisors(a -> a
-                        .param("chat_memory_conversation_id", finalConvId)
-                        .param("chat_memory_response_size", MAX_HISTORY_TOKENS)
+                        .param(ChatMemory.CONVERSATION_ID, finalConvId)
                 )
                 .call()
                 .content();
@@ -61,7 +62,7 @@ public class InMemoryChatService implements ChatService {
 
     @Override
     public List<Message> getConversationHistory(String conversationId) {
-        return this.chatMemory.get(conversationId,-1);
+        return this.chatMemory.get(conversationId);
     }
 
     @Override

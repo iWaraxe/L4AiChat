@@ -3,8 +3,7 @@ package com.coherentsolutions.l4aichat.s3context;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemory;
-import org.springframework.ai.chat.memory.jdbc.JdbcChatMemoryConfig;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -23,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Profile("jdbc")
 public class JdbcChatService implements ChatService {
 
-    private static final int MAX_HISTORY_TOKENS = 2000;  // For limiting conversation size
 
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
@@ -31,14 +29,11 @@ public class JdbcChatService implements ChatService {
 
     @Autowired
     public JdbcChatService(ChatClient.Builder chatClientBuilder, JdbcTemplate jdbcTemplate) {
-        // Build a config for the JDBC memory:
-        JdbcChatMemoryConfig config = JdbcChatMemoryConfig.builder()
-                .jdbcTemplate(jdbcTemplate)
-                // .initializeSchema(true) // if you want auto schema creation
+        // In Spring AI 1.0.0, JDBC chat memory is no longer available
+        // Using MessageWindowChatMemory instead
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .maxMessages(20)
                 .build();
-
-        // Initialize JdbcChatMemory
-        this.chatMemory = JdbcChatMemory.create(config);
 
         // Build the ChatClient with our memory advisor
         this.chatClient = chatClientBuilder
@@ -46,7 +41,8 @@ public class JdbcChatService implements ChatService {
                     You are a friendly and helpful AI assistant that remembers conversation context.
                     Be concise in your responses while still being helpful and accurate.
                     """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
     }
 
@@ -66,15 +62,14 @@ public class JdbcChatService implements ChatService {
         return this.chatClient.prompt()
                 .user(userMessage)
                 .advisors(a -> a
-                        .param("chat_memory_conversation_id", finalConvId)
-                        .param("chat_memory_response_size", MAX_HISTORY_TOKENS))
+                        .param(ChatMemory.CONVERSATION_ID, finalConvId))
                 .call()
                 .content();
     }
 
     @Override
     public List<Message> getConversationHistory(String conversationId) {
-        return this.chatMemory.get(conversationId,-1);
+        return this.chatMemory.get(conversationId);
     }
 
     @Override
