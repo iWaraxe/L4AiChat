@@ -3,7 +3,7 @@ package com.coherentsolutions.l4aichat.s4statemanagement.service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,11 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ConversationService {
 
-    // M7 param names
-    private static final String CONVERSATION_ID_KEY = "chat_memory_conversation_id";
-    private static final String MEMORY_SIZE_KEY = "chat_memory_response_size";
-
-    private static final int DEFAULT_TOKEN_LIMIT = 2000; // Approximate token limit for history
+    // Spring AI 1.0.0 param names
+    private static final String CONVERSATION_ID_KEY = ChatMemory.CONVERSATION_ID;
 
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
@@ -41,8 +38,10 @@ public class ConversationService {
      * @param chatClientBuilder The builder for creating a configured ChatClient
      */
     public ConversationService(ChatClient.Builder chatClientBuilder) {
-        // Initialize chat memory store
-        this.chatMemory = new InMemoryChatMemory();
+        // Initialize chat memory store using MessageWindowChatMemory
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .maxMessages(15)
+                .build();
 
         // Build the chat client with memory support via the MessageChatMemoryAdvisor
         this.chatClient = chatClientBuilder
@@ -51,7 +50,8 @@ public class ConversationService {
                 Respond in a clear, concise, and friendly manner.
                 If you don't know the answer to something, say so rather than making up information.
                 """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
     }
 
@@ -78,8 +78,7 @@ public class ConversationService {
         return this.chatClient.prompt()
                 .user(userMessage)
                 .advisors(a -> a
-                        .param(CONVERSATION_ID_KEY, finalConvId)
-                        .param(MEMORY_SIZE_KEY, DEFAULT_TOKEN_LIMIT))
+                        .param(CONVERSATION_ID_KEY, finalConvId))
                 .call()
                 .content();
     }
@@ -106,8 +105,7 @@ public class ConversationService {
         return this.chatClient.prompt()
                 .user(userMessage)
                 .advisors(a -> a
-                        .param(CONVERSATION_ID_KEY, finalConvId)
-                        .param(MEMORY_SIZE_KEY, DEFAULT_TOKEN_LIMIT))
+                        .param(CONVERSATION_ID_KEY, finalConvId))
                 .stream()
                 .content();
     }
@@ -119,8 +117,8 @@ public class ConversationService {
      * @return A list of messages in the conversation
      */
     public List<Message> getConversationHistory(String conversationId) {
-        // In M7, we do .get(conversationId, limit) instead of getMessages(...)
-        return this.chatMemory.get(conversationId, -1);
+        // In Spring AI 1.0.0, ChatMemory.get() only takes conversation ID
+        return this.chatMemory.get(conversationId);
     }
 
     /**

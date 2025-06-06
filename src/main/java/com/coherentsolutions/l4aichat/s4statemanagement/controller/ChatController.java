@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *  - Clearing conversation history
  *  - Streaming responses
  */
-@RestController
+@RestController("s4ChatController")
 @RequestMapping("/api/s4/chat")
 public class ChatController {
 
