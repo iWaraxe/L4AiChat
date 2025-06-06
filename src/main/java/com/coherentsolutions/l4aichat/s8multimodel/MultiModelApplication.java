@@ -1,12 +1,10 @@
 package com.coherentsolutions.l4aichat.s8multimodel;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for S8 Multi-Model features.
+ */
+@Configuration
 public class MultiModelApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(MultiModelApplication.class, args);
-    }
 }

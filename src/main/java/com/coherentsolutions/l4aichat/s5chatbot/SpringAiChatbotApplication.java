@@ -1,12 +1,10 @@
 package com.coherentsolutions.l4aichat.s5chatbot;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for the S5 Chatbot REST API features.
+ */
+@Configuration
 public class SpringAiChatbotApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(SpringAiChatbotApplication.class, args);
-    }
 }

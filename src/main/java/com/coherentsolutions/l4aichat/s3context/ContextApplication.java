@@ -1,11 +1,10 @@
 package com.coherentsolutions.l4aichat.s3context;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for S3 Context features.
+ */
+@Configuration
 public class ContextApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ContextApplication.class, args);
-    }
 }

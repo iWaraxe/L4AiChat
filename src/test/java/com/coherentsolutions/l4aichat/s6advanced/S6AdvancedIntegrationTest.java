@@ -1,5 +1,6 @@
 package com.coherentsolutions.l4aichat.s6advanced;
 
+import com.coherentsolutions.l4aichat.L4AiChatApplication;
 import com.coherentsolutions.l4aichat.testutils.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = ChatbotApplication.class)
+@SpringBootTest(classes = L4AiChatApplication.class)
 @AutoConfigureMockMvc
 class S6AdvancedIntegrationTest extends IntegrationTestBase {
 

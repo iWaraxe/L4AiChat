@@ -1,13 +1,10 @@
 package com.coherentsolutions.l4aichat.s1multiturn;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for S1 Multi-turn Chat features.
+ */
+@Configuration
 public class AiChatApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(AiChatApplication.class, args);
-    }
-
 }

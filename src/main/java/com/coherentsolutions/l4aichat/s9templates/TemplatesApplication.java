@@ -1,12 +1,10 @@
 package com.coherentsolutions.l4aichat.s9templates;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for S9 Templates features.
+ */
+@Configuration
 public class TemplatesApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TemplatesApplication.class, args);
-    }
 }

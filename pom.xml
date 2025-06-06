@@ -52,10 +52,6 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
-        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

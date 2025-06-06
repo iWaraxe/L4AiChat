@@ -1,12 +1,10 @@
 package com.coherentsolutions.l4aichat.s2components;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+/**
+ * Configuration class for S2 Components features.
+ */
+@Configuration
 public class ComponentsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ComponentsApplication.class, args);
-    }
-
 }
