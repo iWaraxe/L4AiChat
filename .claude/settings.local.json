@@ -20,7 +20,8 @@
       "Bash(git branch:*)",
       "Bash(pkill:*)",
       "Bash(mv:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git stash:*)"
     ],
     "deny": []
   }
