@@ -46,7 +46,8 @@ public class JdbcChatService implements ChatService {
                     You are a friendly and helpful AI assistant that remembers conversation context.
                     Be concise in your responses while still being helpful and accurate.
                     """)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(this.chatMemory))
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(this.chatMemory)
+                        .build())
                 .build();
     }
 
@@ -62,19 +63,19 @@ public class JdbcChatService implements ChatService {
         // Update last interaction time
         lastInteractionTimes.put(finalConvId, System.currentTimeMillis());
 
-        // Pass M7 param names to the advisors
+        // Use Spring AI 1.0.0 parameter names
         return this.chatClient.prompt()
                 .user(userMessage)
-                .advisors(a -> a
-                        .param("chat_memory_conversation_id", finalConvId)
-                        .param("chat_memory_response_size", MAX_HISTORY_TOKENS))
+                .advisors(advisor -> advisor
+                        .param(ChatMemory.CONVERSATION_ID, finalConvId)
+                )
                 .call()
                 .content();
     }
 
     @Override
     public List<Message> getConversationHistory(String conversationId) {
-        return this.chatMemory.get(conversationId,-1);
+        return this.chatMemory.get(conversationId);
     }
 
     @Override
