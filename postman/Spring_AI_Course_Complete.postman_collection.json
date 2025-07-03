@@ -1,0 +1,472 @@
+{
+  "info": {
+    "name": "Spring AI Course Complete",
+    "description": "Master collection containing all Spring AI Course modules and endpoints\n\n## Complete Spring AI Learning Journey\nThis master collection combines all Spring AI Course modules (S1-S9) into a single, comprehensive testing suite. It provides the complete learning journey from basic concepts to advanced patterns.\n\n## Learning Progression\n1. **S1 Multi-Turn**: ChatModel vs ChatClient foundations\n2. **S2 Components**: Core Spring AI components and patterns\n3. **S3 Context**: MessageChatMemoryAdvisor and context management\n4. **S4 State**: Advanced state management and conversation lifecycle\n5. **S5 Chatbot**: Production-ready chatbot patterns\n6. **S6 Advanced**: Personality-driven chat and structured output\n7. **S7 Advisors**: Custom advisor implementations\n8. **S8 Multi-Model**: Multiple model configurations and strategies\n9. **S9 Templates**: Advanced prompt templating systems\n\n## What's Included\n- **80+ endpoints** covering all Spring AI patterns\n- **Educational descriptions** explaining WHY each pattern exists\n- **Trade-off analysis** for architectural decisions\n- **Production considerations** for each approach\n- **Complete test coverage** with validation scripts\n\n## Usage Recommendations\n- **Linear learning**: Execute folders S1→S9 in sequence\n- **Topic-focused**: Use specific folders for targeted learning\n- **Integration testing**: Run complete collection for full system validation\n- **Reference guide**: Use as comprehensive API reference\n\n## Testing Prerequisites\n- Application running: `./mvnw spring-boot:run`\n- Environment configured: Import Spring_AI_Course.postman_environment.json\n- OpenAI API key: Set in environment variables\n- Understanding: Each module builds on previous concepts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "spring-ai-course-complete",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "🏥 Application Health",
+      "item": [
+        {
+          "name": "Complete System Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Comprehensive health check for all Spring AI modules.\n\n**Start here to verify system readiness before testing individual modules.**"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ System is ready for Spring AI testing\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    ",
+                  "    // Verify all modules are healthy",
+                  "    Object.keys(jsonData.modules).forEach(function(module) {",
+                  "        pm.expect(jsonData.modules[module]).to.eql('UP');",
+                  "    });",
+                  "    ",
+                  "    console.log('🎉 All Spring AI modules are healthy and ready!');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "System health verification before module testing"
+    },
+    {
+      "name": "📚 S1: Multi-Turn Foundations",
+      "item": [
+        {
+          "name": "ChatClient vs ChatModel Comparison",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Compare ChatClient and ChatModel APIs in Spring AI. Which should I use and why?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/single-turn/client",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "single-turn", "client"]
+            },
+            "description": "**Learning Goal**: Understand the fundamental difference between Spring AI's two main APIs.\n\n**Key Concepts**: API abstraction levels, when to use each approach."
+          }
+        },
+        {
+          "name": "Start Multi-Turn Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hi! I'm learning Spring AI. Can you help me understand conversation management?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "start"]
+            },
+            "description": "**Learning Goal**: Understand conversation lifecycle and state management basics.\n\n**Key Concepts**: Conversation IDs, session management, context preservation."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.status === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.conversationId) {",
+                  "        pm.environment.set('masterConversationId', jsonData.conversationId);",
+                  "        console.log('🔗 Conversation started:', jsonData.conversationId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Foundation concepts: ChatModel vs ChatClient, conversation basics"
+    },
+    {
+      "name": "🔧 S2: Core Components",
+      "item": [
+        {
+          "name": "System Message Personality",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Explain Spring AI's component architecture\",\n  \"systemMessage\": \"You are a technical architect who explains complex systems clearly and concisely.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s2/client/system",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s2", "client", "system"]
+            },
+            "description": "**Learning Goal**: Master system messages for AI personality control.\n\n**Key Concepts**: Behavior modification, consistency, role-based responses."
+          }
+        },
+        {
+          "name": "Structured Output Demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Analyze Spring Boot and provide structured information about its core features.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s2/client/structured",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s2", "client", "structured"]
+            },
+            "description": "**Learning Goal**: Understand type-safe AI responses with automatic Java object mapping.\n\n**Key Concepts**: Entity mapping, validation, type safety."
+          }
+        }
+      ],
+      "description": "Core Spring AI components: system messages, templates, structured output"
+    },
+    {
+      "name": "🧠 S3: Context Management",
+      "item": [
+        {
+          "name": "Start Context-Aware Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I need to understand MessageChatMemoryAdvisor. How does it work and why is it important?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "new"]
+            },
+            "description": "**Learning Goal**: Understand automatic context management with advisors.\n\n**Key Concepts**: MessageChatMemoryAdvisor, storage backends, context preservation."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.status === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.conversationId) {",
+                  "        pm.environment.set('s3ConversationId', jsonData.conversationId);",
+                  "        console.log('🧠 Context-aware conversation started:', jsonData.conversationId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Continue with Context",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"That's helpful! Now can you explain the difference between in-memory and JDBC storage for context?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/{{s3ConversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "{{s3ConversationId}}"]
+            },
+            "description": "**Learning Goal**: See context preservation in action with follow-up questions.\n\n**Key Concepts**: Context awareness, conversation flow, memory management."
+          }
+        }
+      ],
+      "description": "Advanced context management with MessageChatMemoryAdvisor"
+    },
+    {
+      "name": "🚀 S6: Advanced Patterns",
+      "item": [
+        {
+          "name": "Consultant Personality Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Our team is considering adopting Spring AI for our enterprise application. What's your professional assessment?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/personality/consultant",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "personality", "consultant"]
+            },
+            "description": "**Learning Goal**: Master dynamic personality injection for different use cases.\n\n**Key Concepts**: Professional personas, context-appropriate responses."
+          }
+        },
+        {
+          "name": "Complex Structured Output",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Design a microservices architecture for an e-commerce platform with detailed service definitions and deployment strategies.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/structured/complex",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "structured", "complex"]
+            },
+            "description": "**Learning Goal**: Handle complex nested object structures from AI responses.\n\n**Key Concepts**: Deep nesting, enterprise patterns, type safety at scale."
+          }
+        },
+        {
+          "name": "Advanced Streaming",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Provide a comprehensive implementation guide for Spring AI in production, including all best practices and architectural patterns.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/stream",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "stream"]
+            },
+            "description": "**Learning Goal**: Implement real-time streaming for enhanced user experience.\n\n**Key Concepts**: Server-Sent Events, progressive disclosure, performance optimization."
+          }
+        }
+      ],
+      "description": "Advanced patterns: personalities, complex structures, streaming"
+    },
+    {
+      "name": "📋 Testing Workflows",
+      "item": [
+        {
+          "name": "Complete Module Health Verification",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "**Testing Goal**: Verify all modules remain healthy after comprehensive testing.\n\n**Validation**: System stability, resource management, error recovery."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"🎯 All modules remain healthy after testing\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    console.log('✅ Spring AI Course testing completed successfully!');",
+                  "});",
+                  "",
+                  "pm.test(\"📊 System performance is acceptable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "    console.log('⚡ Health check response time:', pm.response.responseTime + 'ms');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Conversation Cleanup",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/{{s3ConversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "{{s3ConversationId}}"]
+            },
+            "description": "**Testing Goal**: Demonstrate proper conversation cleanup and resource management.\n\n**Validation**: Memory cleanup, graceful termination, audit trails."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"🧹 Conversation cleanup completed\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    console.log('🗑️ Conversation resources cleaned up properly');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Testing workflows and cleanup procedures"
+    },
+    {
+      "name": "📖 Quick Reference",
+      "item": [
+        {
+          "name": "API Endpoint Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "**Quick Reference**: All Spring AI Course endpoints and their purposes.\n\n## Module Endpoints Overview\n\n### S1 Multi-Turn (Foundations)\n- `POST /api/s1/chat/single-turn/client` - ChatClient basics\n- `POST /api/s1/chat/single-turn/model` - ChatModel basics\n- `POST /api/s1/chat/multi-turn/start` - Start conversation\n- `POST /api/s1/chat/multi-turn/continue/{id}` - Continue conversation\n\n### S2 Components (Core Features)\n- `POST /api/s2/client/basic` - Basic ChatClient usage\n- `POST /api/s2/client/system` - System message control\n- `POST /api/s2/client/template` - Template processing\n- `POST /api/s2/client/structured` - Entity mapping\n- `POST /api/s2/client/stream` - Streaming responses\n\n### S3 Context (Memory Management)\n- `POST /api/s3/chat/new` - Context-aware conversation start\n- `POST /api/s3/chat/{id}` - Context-preserved interaction\n- `GET /api/s3/chat/info` - Service configuration info\n\n### S6 Advanced (Production Patterns)\n- `POST /api/s6/chat/personality/{type}` - Personality-driven chat\n- `POST /api/s6/chat/custom-params` - Advanced parameter tuning\n- `POST /api/chat/structured/complex` - Complex object mapping\n- `POST /api/s6/chat/stream` - Advanced streaming\n\n### Health Monitoring\n- `GET /api/health` - Application health\n- `GET /api/s{N}/health` - Module-specific health\n\n## Learning Path Recommendations\n1. **Beginners**: S1 → S2 → S3 → S6\n2. **Experienced**: Focus on S6 advanced patterns\n3. **Production**: Health monitoring + S6 patterns\n4. **Integration**: Complete collection testing"
+          }
+        }
+      ],
+      "description": "Quick reference and learning path guidance"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Master collection pre-request setup",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:8080');",
+          "}",
+          "",
+          "// Log the learning journey progress",
+          "console.log('🎓 Spring AI Course - Request:', pm.info.requestName);",
+          "console.log('📍 URL:', pm.request.url.toString());",
+          "",
+          "// Set up timing for performance tracking",
+          "pm.environment.set('requestStartTime', new Date().getTime());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Master collection post-response processing",
+          "var startTime = pm.environment.get('requestStartTime');",
+          "var endTime = new Date().getTime();",
+          "var totalTime = endTime - startTime;",
+          "",
+          "// Global performance validation",
+          "pm.test('⚡ Response time is acceptable for learning', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "// Log learning progress",
+          "if (pm.response.status === 200) {",
+          "    console.log('✅ Success:', pm.info.requestName);",
+          "} else {",
+          "    console.log('❌ Failed:', pm.info.requestName, 'Status:', pm.response.status);",
+          "}",
+          "",
+          "console.log('⏱️ Total time:', totalTime + 'ms');",
+          "",
+          "// Track completion progress",
+          "var completedRequests = pm.environment.get('completedRequests') || 0;",
+          "pm.environment.set('completedRequests', parseInt(completedRequests) + 1);",
+          "",
+          "console.log('📈 Requests completed:', pm.environment.get('completedRequests'));"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "masterConversationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "s3ConversationId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

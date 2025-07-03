@@ -1,0 +1,975 @@
+{
+  "info": {
+    "name": "S6 Advanced Chat",
+    "description": "Module S6: Advanced chat patterns and structured responses\n\n## Learning Objectives\n- Master personality-driven chat interactions\n- Understand structured output patterns and type safety\n- Learn advanced parameter tuning for different use cases\n- Explore streaming patterns for real-time user experience\n- Practice complex data structure mapping from AI responses\n\n## Why This Module Exists\nThis module represents the culmination of Spring AI capabilities, combining advanced chat patterns with structured output processing. It demonstrates production-ready patterns for building sophisticated AI applications that return type-safe, structured data rather than just text.\n\n## Key Architectural Decisions\n- **Personality system prompts**: Dynamic AI behavior modification\n- **Structured output mapping**: Type-safe AI responses to Java objects\n- **Advanced parameter control**: Fine-tuned AI behavior for specific use cases\n- **Streaming architecture**: Real-time response delivery\n- **Complex data modeling**: Nested object structures from AI\n\n## Production Patterns Demonstrated\n- AI personality management for different user contexts\n- Type-safe AI integration with business logic\n- Performance optimization through streaming\n- Complex data extraction from natural language\n- Advanced prompt engineering techniques\n\n## Testing Prerequisites\n- Application running: `./mvnw spring-boot:run`\n- Valid OpenAI API key configured\n- Understanding of Java record types and structured data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "s6-advanced-chat",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Module Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "health"]
+            },
+            "description": "Verify S6 advanced chat module health and feature availability."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"UP\",\n  \"module\": \"s6-advanced\",\n  \"description\": \"Advanced chat patterns and structured responses\",\n  \"features\": [\n    \"personality-prompts\",\n    \"structured-output\",\n    \"streaming\",\n    \"parameter-tuning\",\n    \"complex-mapping\"\n  ],\n  \"timestamp\": \"2024-01-01T10:00:00Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Module supports advanced features\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.eql(\"s6-advanced\");",
+                  "    pm.expect(jsonData.features).to.include('structured-output');",
+                  "    pm.expect(jsonData.features).to.include('personality-prompts');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Health monitoring for S6 advanced chat module"
+    },
+    {
+      "name": "Advanced Chat Patterns",
+      "item": [
+        {
+          "name": "Basic Advanced Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I need help designing a microservices architecture for an e-commerce platform. Can you provide a comprehensive analysis including service boundaries, data flow, and technology recommendations?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/basic",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "basic"]
+            },
+            "description": "Demonstrates basic advanced chat with optimized default settings.\n\n**Why advanced chat differs from basic chat:**\n- **Optimized prompts**: Production-tested system prompts\n- **Advanced parameters**: Fine-tuned temperature, token limits, etc.\n- **Error resilience**: Robust error handling and retry logic\n- **Performance optimization**: Efficient token usage and response formatting\n\n**Advanced chat characteristics:**\n- More sophisticated system prompts for better responses\n- Balanced parameters for quality vs speed\n- Built-in best practices for production use\n- Enhanced error handling and edge case management\n\n**Use cases for advanced chat:**\n- Production applications requiring consistent quality\n- Complex problem-solving scenarios\n- Technical consultation and advice\n- Detailed analysis and recommendations\n\n**Trade-offs vs basic chat:**\n- **Pros**: Higher quality, more consistent, production-ready\n- **Cons**: Slightly higher token usage, more complex configuration\n\n**Parameter optimization:**\n- **Temperature**: Balanced for creativity and accuracy (0.7)\n- **Max tokens**: Sufficient for detailed responses (1000+)\n- **System prompt**: Optimized for helpful, detailed responses\n- **Top-p**: Nucleus sampling for quality control"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"I need help designing a microservices architecture for an e-commerce platform. Can you provide a comprehensive analysis including service boundaries, data flow, and technology recommendations?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/chat/basic",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "chat", "basic"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"I'll help you design a comprehensive microservices architecture for your e-commerce platform...\",\n  \"chatLevel\": \"advanced\",\n  \"optimizations\": {\n    \"systemPrompt\": \"production-optimized\",\n    \"parameters\": \"balanced-quality\",\n    \"errorHandling\": \"enhanced\"\n  },\n  \"responseCharacteristics\": {\n    \"depth\": \"comprehensive\",\n    \"structure\": \"well-organized\",\n    \"technical\": \"detailed\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Advanced chat optimizations applied\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('chatLevel');",
+                  "    pm.expect(jsonData.chatLevel).to.eql('advanced');",
+                  "    pm.expect(jsonData).to.have.property('optimizations');",
+                  "});",
+                  "",
+                  "pm.test(\"Response is comprehensive\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(200);",
+                  "    pm.expect(jsonData.responseCharacteristics.depth).to.eql('comprehensive');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat with Consultant Personality",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Our company is struggling with slow database performance in our Spring Boot application. What's your assessment and recommendation?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/personality/consultant",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "personality", "consultant"]
+            },
+            "description": "Demonstrates AI personality modification through dynamic system prompts.\n\n**Why personality-driven AI is powerful:**\n- **Context-appropriate responses**: AI adapts to specific use cases\n- **Consistent behavior**: Maintains character across interactions\n- **User experience**: Feels more natural and professional\n- **Domain expertise**: Can embody specific professional roles\n\n**Consultant personality characteristics:**\n- **Analytical approach**: Systematic problem analysis\n- **Professional tone**: Business-appropriate communication\n- **Structured recommendations**: Clear action items and priorities\n- **Risk assessment**: Considers implications and trade-offs\n\n**Personality implementation patterns:**\n- **Dynamic system prompts**: Personality injected via system messages\n- **Contextual behavior**: Responses match expected professional behavior\n- **Consistent voice**: Maintains personality across conversation\n- **Domain knowledge**: Embodies relevant expertise\n\n**Alternative personalities available:**\n- **consultant**: Business analysis and recommendations\n- **teacher**: Educational, step-by-step explanations\n- **developer**: Technical, code-focused responses\n- **architect**: High-level design and system thinking\n\n**Production applications:**\n- Customer service bots with appropriate personalities\n- Educational platforms with teacher-like AI\n- Technical support with developer personality\n- Business advisory with consultant approach\n\n**Best practices:**\n- Keep personalities consistent and professional\n- Match personality to use case and audience\n- Test personalities with real user scenarios\n- Avoid stereotypes or inappropriate characterizations\n\n**Common pitfalls:**\n- Over-exaggerated personalities that feel artificial\n- Inconsistent personality across conversation\n- Personalities that don't match user expectations\n- Not testing edge cases with different personalities"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Our company is struggling with slow database performance in our Spring Boot application. What's your assessment and recommendation?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/chat/personality/consultant",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "chat", "personality", "consultant"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"Thank you for bringing this performance concern to my attention. Let me provide a systematic assessment...\",\n  \"personality\": {\n    \"type\": \"consultant\",\n    \"characteristics\": [\n      \"analytical\",\n      \"systematic\",\n      \"solution-oriented\",\n      \"business-focused\"\n    ],\n    \"responseStyle\": \"structured-recommendation\"\n  },\n  \"consultantApproach\": {\n    \"assessmentMethod\": \"systematic-analysis\",\n    \"deliverableFormat\": \"executive-summary\",\n    \"actionItems\": \"prioritized\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Consultant personality applied\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('personality');",
+                  "    pm.expect(jsonData.personality.type).to.eql('consultant');",
+                  "    pm.expect(jsonData.personality.characteristics).to.include('analytical');",
+                  "});",
+                  "",
+                  "pm.test(\"Response exhibits consultant approach\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('consultantApproach');",
+                  "    pm.expect(jsonData.consultantApproach.assessmentMethod).to.eql('systematic-analysis');",
+                  "});",
+                  "",
+                  "pm.test(\"Professional tone in response\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('assessment') || response.includes('recommend') || response.includes('analysis');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat with Developer Personality",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I'm getting a NullPointerException in my Spring Security configuration. Can you help me debug this?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/personality/developer",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "personality", "developer"]
+            },
+            "description": "Demonstrates developer personality for technical problem-solving.\n\n**Developer personality characteristics:**\n- **Technical precision**: Code-focused and implementation-oriented\n- **Debugging mindset**: Systematic troubleshooting approach\n- **Practical solutions**: Actionable code examples and fixes\n- **Best practices**: Includes relevant patterns and conventions\n\n**Developer vs Consultant approach:**\n- **Developer**: \"Here's the code to fix it\"\n- **Consultant**: \"Here's the business impact and strategy\"\n- **Developer**: Technical details and implementation\n- **Consultant**: High-level analysis and recommendations\n\n**When to use developer personality:**\n- Technical support and debugging assistance\n- Code review and optimization help\n- Implementation guidance and tutorials\n- Troubleshooting and error resolution\n\n**Response patterns expected:**\n- Code examples and snippets\n- Step-by-step debugging procedures\n- Technical explanations with implementation details\n- References to documentation and best practices\n\n**Personality consistency:**\n- Maintains technical focus throughout conversation\n- Uses appropriate technical terminology\n- Provides actionable, implementable solutions\n- Considers performance and maintainability"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"I'm getting a NullPointerException in my Spring Security configuration. Can you help me debug this?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/chat/personality/developer",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "chat", "personality", "developer"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"Let's debug this NPE step by step. First, check if your SecurityFilterChain bean is properly configured...\",\n  \"personality\": {\n    \"type\": \"developer\",\n    \"characteristics\": [\n      \"technical\",\n      \"debugging-focused\",\n      \"code-oriented\",\n      \"practical\"\n    ],\n    \"responseStyle\": \"step-by-step-solution\"\n  },\n  \"developerApproach\": {\n    \"debuggingMethod\": \"systematic-elimination\",\n    \"solutionFormat\": \"code-examples\",\n    \"focus\": \"immediate-fix\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Developer personality applied\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.personality.type).to.eql('developer');",
+                  "    pm.expect(jsonData.personality.characteristics).to.include('technical');",
+                  "    pm.expect(jsonData.personality.characteristics).to.include('debugging-focused');",
+                  "});",
+                  "",
+                  "pm.test(\"Technical debugging approach\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.developerApproach.debuggingMethod).to.eql('systematic-elimination');",
+                  "    pm.expect(jsonData.developerApproach.solutionFormat).to.eql('code-examples');",
+                  "});",
+                  "",
+                  "pm.test(\"Response includes technical guidance\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('debug') || response.includes('check') || response.includes('configure');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat with Custom Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Create an innovative and creative marketing campaign concept for a new AI-powered fitness app targeting Gen Z users.\",\n  \"parameters\": {\n    \"temperature\": 0.9,\n    \"maxTokens\": 500,\n    \"topP\": 0.9,\n    \"presencePenalty\": 0.6,\n    \"frequencyPenalty\": 0.3\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/custom-params",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "custom-params"]
+            },
+            "description": "Demonstrates advanced parameter tuning for specific use cases.\n\n**Why custom parameters matter:**\n- **Task-specific optimization**: Different tasks need different AI behavior\n- **Quality control**: Fine-tune responses for specific requirements\n- **Cost management**: Balance quality with token usage\n- **Performance tuning**: Optimize response time vs quality\n\n**Parameter explanation:**\n- **temperature (0.9)**: High creativity for marketing ideas\n- **maxTokens (500)**: Sufficient for detailed concept but cost-controlled\n- **topP (0.9)**: Nucleus sampling for quality control\n- **presencePenalty (0.6)**: Encourage new topics and ideas\n- **frequencyPenalty (0.3)**: Reduce repetitive phrases\n\n**Parameter tuning strategies:**\n\n**For creative tasks (marketing, writing):**\n- Higher temperature (0.8-1.0)\n- Higher presence penalty (0.5-0.8)\n- Moderate frequency penalty (0.2-0.5)\n\n**For analytical tasks (code, analysis):**\n- Lower temperature (0.2-0.5)\n- Lower penalties (0.0-0.3)\n- Focus on accuracy over creativity\n\n**For conversational tasks:**\n- Moderate temperature (0.6-0.8)\n- Balanced penalties (0.2-0.4)\n- Natural, engaging responses\n\n**Production considerations:**\n- A/B test different parameter combinations\n- Monitor quality vs cost trade-offs\n- Use different parameter sets for different user types\n- Consider user preferences for creativity vs consistency\n\n**Common parameter mistakes:**\n- Using same parameters for all tasks\n- Extreme temperature values (too high/low)\n- Not considering token limits for cost control\n- Ignoring the interaction between different parameters"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Create an innovative and creative marketing campaign concept for a new AI-powered fitness app targeting Gen Z users.\",\n  \"parameters\": {\n    \"temperature\": 0.9,\n    \"maxTokens\": 500,\n    \"topP\": 0.9,\n    \"presencePenalty\": 0.6,\n    \"frequencyPenalty\": 0.3\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/chat/custom-params",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "chat", "custom-params"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"🎯 **Campaign Concept: 'FitFuture - Your AI Workout Bestie'**\\n\\nImagine an AI that doesn't just track your reps...\",\n  \"parametersUsed\": {\n    \"temperature\": 0.9,\n    \"maxTokens\": 500,\n    \"topP\": 0.9,\n    \"presencePenalty\": 0.6,\n    \"frequencyPenalty\": 0.3\n  },\n  \"responseAnalysis\": {\n    \"creativity\": \"high\",\n    \"originality\": \"enhanced\",\n    \"repetition\": \"minimized\",\n    \"focus\": \"diverse-ideas\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Custom parameters were applied\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('parametersUsed');",
+                  "    pm.expect(jsonData.parametersUsed.temperature).to.eql(0.9);",
+                  "    pm.expect(jsonData.parametersUsed.presencePenalty).to.eql(0.6);",
+                  "});",
+                  "",
+                  "pm.test(\"High creativity parameters reflected in analysis\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('responseAnalysis');",
+                  "    pm.expect(jsonData.responseAnalysis.creativity).to.eql('high');",
+                  "    pm.expect(jsonData.responseAnalysis.originality).to.eql('enhanced');",
+                  "});",
+                  "",
+                  "pm.test(\"Response is creative and engaging\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(100);",
+                  "    // Should contain creative elements like emojis or unique concepts",
+                  "    pm.expect(jsonData.response).to.satisfy(function(response) {",
+                  "        return response.includes('🎯') || response.includes('Concept:') || response.includes('Campaign');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Streaming Advanced Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Provide a comprehensive guide to implementing advanced Spring AI patterns including advisors, structured output, and multi-model configurations. Include code examples and best practices.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/chat/stream",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "chat", "stream"]
+            },
+            "description": "Demonstrates advanced streaming patterns for complex responses.\n\n**Why streaming is crucial for advanced chat:**\n- **Long-form content**: Advanced responses are often lengthy\n- **User engagement**: Immediate feedback prevents abandonment\n- **Perceived performance**: Streaming feels faster than waiting\n- **Progressive disclosure**: Users can start reading while AI continues\n\n**Advanced streaming characteristics:**\n- **Structured chunks**: Organized content delivery\n- **Progressive formatting**: Maintains readability during streaming\n- **Error resilience**: Graceful handling of stream interruptions\n- **Completion signaling**: Clear indication when response is complete\n\n**Streaming implementation patterns:**\n- **Server-Sent Events (SSE)**: Standard web streaming protocol\n- **Flux<ChatResponse>**: Reactive streams for Spring WebFlux\n- **Chunk management**: Optimal chunk sizes for user experience\n- **Connection lifecycle**: Proper connection cleanup and timeout handling\n\n**Production streaming considerations:**\n- **Load balancer configuration**: Proper timeout settings for streams\n- **Client retry logic**: Handling network interruptions\n- **Rate limiting**: Prevent abuse of streaming endpoints\n- **Monitoring**: Track stream completion rates and performance\n\n**User experience optimization:**\n- Start streaming immediately when first content available\n- Maintain consistent chunk sizes for smooth rendering\n- Handle network failures gracefully with retry logic\n- Provide clear completion indicators\n\n**Performance optimization:**\n- Use appropriate buffer sizes for chunk delivery\n- Implement backpressure handling for slow clients\n- Monitor memory usage during long streams\n- Set reasonable timeouts to prevent resource leaks\n\n**Alternative approaches considered:**\n- **WebSockets**: Rejected due to overkill for one-way streaming\n- **Polling**: Rejected due to poor user experience and inefficiency\n- **Chunked transfer encoding**: Considered but SSE provides better semantics"
+          },
+          "response": [
+            {
+              "name": "Stream Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/event-stream"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Provide a comprehensive guide to implementing advanced Spring AI patterns including advisors, structured output, and multi-model configurations. Include code examples and best practices.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s6/chat/stream",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s6", "chat", "stream"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/event-stream"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache"
+                }
+              ],
+              "cookie": [],
+              "body": "data: {\"content\": \"# Comprehensive Guide to Advanced Spring AI Patterns\"}\n\ndata: {\"content\": \"\\n\\n## Overview\\nThis guide covers...\"}\n\ndata: {\"content\": \"\\n\\n## 1. Advisor Patterns\\n```java\\n@Configuration\\npublic class AdvisorConfig {\"}\n\ndata: {\"content\": \"\\n    @Bean\\n    public MessageChatMemoryAdvisor chatMemoryAdvisor() {\"}\n\ndata: {\"content\": \"\\n        return new MessageChatMemoryAdvisor(chatMemory());\\n    }\\n}\"}\n\ndata: {\"streamInfo\": {\"type\": \"advanced\", \"totalChunks\": 25, \"chunkNumber\": 5}}\n\ndata: [DONE]\n\n"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is text/event-stream\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('text/event-stream');",
+                  "});",
+                  "",
+                  "pm.test(\"Stream contains structured content\", function () {",
+                  "    var responseText = pm.response.text();",
+                  "    pm.expect(responseText).to.include('data:');",
+                  "    pm.expect(responseText).to.include('Spring AI Patterns');",
+                  "    pm.expect(responseText).to.include('java');",
+                  "});",
+                  "",
+                  "pm.test(\"Stream includes metadata\", function () {",
+                  "    var responseText = pm.response.text();",
+                  "    pm.expect(responseText).to.include('streamInfo');",
+                  "    pm.expect(responseText).to.include('totalChunks');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Advanced chat patterns with personalities and custom parameters"
+    },
+    {
+      "name": "Structured Output",
+      "item": [
+        {
+          "name": "Map-Structured Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Analyze the pros and cons of using microservices architecture for a medium-sized e-commerce application. Provide specific categories and detailed points.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/structured/map",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "structured", "map"]
+            },
+            "description": "Demonstrates structured output as a Map for flexible key-value data.\n\n**Why Map-structured output is valuable:**\n- **Flexible structure**: Can accommodate varying data shapes\n- **Easy processing**: Standard Java Map operations\n- **Dynamic keys**: Keys can be generated based on content\n- **Integration-friendly**: Easy to convert to JSON, cache, or process\n\n**Map structure advantages:**\n- **Adaptability**: Can handle unknown or varying data structures\n- **Simplicity**: No need to define complex POJOs\n- **Performance**: Efficient for simple key-value scenarios\n- **Debugging**: Easy to inspect and validate\n\n**Use cases for Map output:**\n- Configuration data extraction\n- Dynamic categorization of information\n- Flexible analysis results\n- API responses with varying structures\n\n**Trade-offs vs typed objects:**\n- **Pros**: Flexible, simple, handles dynamic structures\n- **Cons**: No compile-time type safety, requires runtime validation\n\n**Best practices:**\n- Validate Map keys and values after extraction\n- Use consistent key naming conventions\n- Handle missing or null values gracefully\n- Consider using typed objects for well-defined structures\n\n**Production considerations:**\n- Monitor Map structure consistency\n- Implement validation for expected keys\n- Handle edge cases where AI doesn't follow structure\n- Consider caching structured results for performance"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"Analyze the pros and cons of using microservices architecture for a medium-sized e-commerce application. Provide specific categories and detailed points.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/chat/structured/map",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "chat", "structured", "map"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"structuredResult\": {\n    \"scalability_pros\": \"Independent service scaling, horizontal scaling flexibility\",\n    \"scalability_cons\": \"Increased complexity in service coordination\",\n    \"development_pros\": \"Team independence, technology diversity, faster deployment cycles\",\n    \"development_cons\": \"Service coordination overhead, distributed debugging challenges\",\n    \"maintenance_pros\": \"Isolated failures, easier updates for individual services\",\n    \"maintenance_cons\": \"Network latency, data consistency challenges\",\n    \"cost_pros\": \"Resource optimization, pay-per-service scaling\",\n    \"cost_cons\": \"Infrastructure overhead, monitoring complexity\"\n  },\n  \"outputType\": \"Map<String, String>\",\n  \"structureInfo\": {\n    \"totalKeys\": 8,\n    \"categories\": [\"scalability\", \"development\", \"maintenance\", \"cost\"],\n    \"keyPattern\": \"category_proscons\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains structured Map\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('structuredResult');",
+                  "    pm.expect(jsonData).to.have.property('outputType');",
+                  "    pm.expect(jsonData.outputType).to.include('Map');",
+                  "});",
+                  "",
+                  "pm.test(\"Map contains expected categories\", function () {",
+                  "    var result = pm.response.json().structuredResult;",
+                  "    pm.expect(result).to.have.property('scalability_pros');",
+                  "    pm.expect(result).to.have.property('development_cons');",
+                  "    pm.expect(result).to.have.property('cost_pros');",
+                  "});",
+                  "",
+                  "pm.test(\"Structure info provides metadata\", function () {",
+                  "    var structureInfo = pm.response.json().structureInfo;",
+                  "    pm.expect(structureInfo).to.have.property('totalKeys');",
+                  "    pm.expect(structureInfo.totalKeys).to.be.greaterThan(0);",
+                  "    pm.expect(structureInfo.categories).to.include('scalability');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "List-Structured Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"List the top 10 Spring Boot best practices for production applications, ordered by importance. Include brief explanations for each.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/structured/list",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "structured", "list"]
+            },
+            "description": "Demonstrates structured output as a List for ordered collections.\n\n**Why List-structured output is powerful:**\n- **Ordered data**: Maintains sequence and priority\n- **Iterable processing**: Easy to loop through and process\n- **Aggregation-friendly**: Can be easily combined, filtered, or sorted\n- **UI-ready**: Direct mapping to frontend lists and tables\n\n**List structure benefits:**\n- **Order preservation**: Maintains AI-determined importance or sequence\n- **Easy manipulation**: Standard Java List operations available\n- **Consistent structure**: Each item follows same pattern\n- **Scalable**: Can handle varying numbers of items\n\n**Use cases for List output:**\n- Ranked recommendations or priorities\n- Step-by-step procedures or guides\n- Feature comparisons or analysis\n- Ordered collections of related items\n\n**List item structure options:**\n- **Simple strings**: For basic lists\n- **Objects**: For complex structured items\n- **Maps**: For flexible item properties\n- **Custom POJOs**: For type-safe processing\n\n**Production applications:**\n- Recommendation engines\n- Task prioritization systems\n- Feature comparison tools\n- Educational content ordering\n\n**Best practices:**\n- Validate list size and content consistency\n- Handle empty or malformed lists gracefully\n- Consider pagination for large lists\n- Implement proper error handling for list processing\n\n**Performance considerations:**\n- Monitor list sizes to prevent memory issues\n- Consider streaming for very large lists\n- Implement caching for frequently requested lists\n- Use appropriate data structures for list operations"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"List the top 10 Spring Boot best practices for production applications, ordered by importance. Include brief explanations for each.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/chat/structured/list",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "chat", "structured", "list"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"structuredResult\": [\n    {\n      \"rank\": 1,\n      \"practice\": \"Externalize Configuration\",\n      \"explanation\": \"Use application.yml and environment variables for all environment-specific settings\"\n    },\n    {\n      \"rank\": 2,\n      \"practice\": \"Implement Health Checks\",\n      \"explanation\": \"Use Spring Boot Actuator for comprehensive health monitoring and readiness probes\"\n    },\n    {\n      \"rank\": 3,\n      \"practice\": \"Configure Logging Properly\",\n      \"explanation\": \"Set up structured logging with appropriate levels and log aggregation\"\n    },\n    {\n      \"rank\": 4,\n      \"practice\": \"Use Connection Pooling\",\n      \"explanation\": \"Configure HikariCP or similar for database connection management\"\n    },\n    {\n      \"rank\": 5,\n      \"practice\": \"Enable Security Headers\",\n      \"explanation\": \"Configure Spring Security for HTTPS, CSRF, and security headers\"\n    }\n  ],\n  \"outputType\": \"List<BestPractice>\",\n  \"listInfo\": {\n    \"totalItems\": 5,\n    \"ordering\": \"by-importance\",\n    \"itemStructure\": \"rank-practice-explanation\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains structured List\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('structuredResult');",
+                  "    pm.expect(jsonData.structuredResult).to.be.an('array');",
+                  "    pm.expect(jsonData.outputType).to.include('List');",
+                  "});",
+                  "",
+                  "pm.test(\"List items have consistent structure\", function () {",
+                  "    var result = pm.response.json().structuredResult;",
+                  "    if (result.length > 0) {",
+                  "        var firstItem = result[0];",
+                  "        pm.expect(firstItem).to.have.property('rank');",
+                  "        pm.expect(firstItem).to.have.property('practice');",
+                  "        pm.expect(firstItem).to.have.property('explanation');",
+                  "        pm.expect(firstItem.rank).to.be.a('number');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"List is ordered by importance\", function () {",
+                  "    var result = pm.response.json().structuredResult;",
+                  "    if (result.length > 1) {",
+                  "        pm.expect(result[0].rank).to.be.lessThan(result[1].rank);",
+                  "    }",
+                  "    pm.expect(pm.response.json().listInfo.ordering).to.eql('by-importance');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Java Bean Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Analyze the Spring AI project and provide a comprehensive project assessment including technology stack, strengths, weaknesses, and recommendations.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/structured/bean",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "structured", "bean"]
+            },
+            "description": "Demonstrates structured output mapped to Java POJOs/Records.\n\n**Why Java Bean/Record mapping is revolutionary:**\n- **Type safety**: Compile-time checking of response structure\n- **IDE support**: Auto-completion and refactoring capabilities\n- **Validation**: Bean Validation annotations for data quality\n- **Integration**: Seamless integration with business logic\n\n**Record vs POJO advantages:**\n- **Records**: Immutable, concise, modern Java pattern\n- **POJOs**: Mutable, traditional, more flexible\n- **Records preferred**: For data transfer and API responses\n- **POJOs suitable**: When mutability is required\n\n**Bean mapping benefits:**\n- **Documentation**: Class structure serves as API documentation\n- **Maintainability**: Changes are compile-time safe\n- **Testing**: Easy to create test data and assertions\n- **Serialization**: Automatic JSON/XML serialization support\n\n**Validation and error handling:**\n- **Bean Validation**: Use @NotNull, @Size, @Valid annotations\n- **Custom validators**: Implement domain-specific validation\n- **Error messages**: Clear validation failure messages\n- **Fallback handling**: Graceful degradation when mapping fails\n\n**Production patterns:**\n- Use records for immutable data transfer\n- Implement validation at service boundaries\n- Create builder patterns for complex objects\n- Use sealed classes for type hierarchies\n\n**Best practices:**\n- Keep bean structures simple and focused\n- Use descriptive field names that AI can understand\n- Include examples in prompts to guide AI\n- Implement proper equals/hashCode for records\n- Handle optional fields with Java Optional\n\n**Common pitfalls:**\n- Overly complex nested structures\n- Missing validation annotations\n- Poor field naming that confuses AI\n- Not handling parsing failures gracefully"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"Analyze the Spring AI project and provide a comprehensive project assessment including technology stack, strengths, weaknesses, and recommendations.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/chat/structured/bean",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "chat", "structured", "bean"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"projectAssessment\": {\n    \"projectName\": \"Spring AI\",\n    \"version\": \"1.0.0\",\n    \"technologyStack\": {\n      \"primaryFramework\": \"Spring Framework 6.x\",\n      \"buildTool\": \"Maven\",\n      \"javaVersion\": \"17+\",\n      \"aiIntegration\": \"OpenAI GPT Models\"\n    },\n    \"strengths\": [\n      \"Seamless Spring ecosystem integration\",\n      \"Type-safe AI interactions\",\n      \"Comprehensive documentation\",\n      \"Active community support\"\n    ],\n    \"weaknesses\": [\n      \"Limited to OpenAI models currently\",\n      \"Learning curve for AI concepts\",\n      \"Token cost considerations\"\n    ],\n    \"recommendations\": [\n      \"Start with simple ChatClient implementations\",\n      \"Implement proper error handling\",\n      \"Monitor token usage and costs\",\n      \"Use structured output for production\"\n    ],\n    \"overallRating\": \"EXCELLENT\",\n    \"readinessLevel\": \"PRODUCTION_READY\"\n  },\n  \"outputType\": \"ProjectAssessment\",\n  \"mappingInfo\": {\n    \"recordType\": \"ProjectAssessment\",\n    \"fieldsCount\": 7,\n    \"validationApplied\": true\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains Java Bean structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('projectAssessment');",
+                  "    pm.expect(jsonData).to.have.property('outputType');",
+                  "    pm.expect(jsonData.outputType).to.eql('ProjectAssessment');",
+                  "});",
+                  "",
+                  "pm.test(\"Project assessment has required fields\", function () {",
+                  "    var assessment = pm.response.json().projectAssessment;",
+                  "    pm.expect(assessment).to.have.property('projectName');",
+                  "    pm.expect(assessment).to.have.property('technologyStack');",
+                  "    pm.expect(assessment).to.have.property('strengths');",
+                  "    pm.expect(assessment).to.have.property('weaknesses');",
+                  "    pm.expect(assessment).to.have.property('recommendations');",
+                  "});",
+                  "",
+                  "pm.test(\"Technology stack is properly structured\", function () {",
+                  "    var tech = pm.response.json().projectAssessment.technologyStack;",
+                  "    pm.expect(tech).to.have.property('primaryFramework');",
+                  "    pm.expect(tech).to.have.property('javaVersion');",
+                  "    pm.expect(tech.primaryFramework).to.include('Spring');",
+                  "});",
+                  "",
+                  "pm.test(\"Arrays contain meaningful content\", function () {",
+                  "    var assessment = pm.response.json().projectAssessment;",
+                  "    pm.expect(assessment.strengths).to.be.an('array');",
+                  "    pm.expect(assessment.strengths.length).to.be.greaterThan(0);",
+                  "    pm.expect(assessment.recommendations).to.be.an('array');",
+                  "    pm.expect(assessment.recommendations.length).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Complex Nested Object Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Design a comprehensive microservices architecture for an e-commerce platform. Include service definitions, data models, API contracts, deployment strategies, and monitoring approaches.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/structured/complex",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "structured", "complex"]
+            },
+            "description": "Demonstrates complex nested object structures from AI responses.\n\n**Why complex structured output is game-changing:**\n- **Enterprise applications**: Real-world data is often deeply nested\n- **API design**: Complex structures match domain models\n- **Integration**: Direct mapping to business objects\n- **Documentation**: Structure serves as API specification\n\n**Complex structure benefits:**\n- **Rich data modeling**: Captures real-world complexity\n- **Type safety**: Deep validation and type checking\n- **Maintainability**: Changes are compile-time safe\n- **Tooling support**: IDE assistance for complex structures\n\n**Nested object patterns:**\n- **Composition**: Objects containing other objects\n- **Collections**: Lists and maps of complex types\n- **Polymorphism**: Different object types in same structure\n- **Optional fields**: Handling missing or conditional data\n\n**Production complexity management:**\n- **Validation strategies**: Validate at each nesting level\n- **Error handling**: Clear messages for complex failures\n- **Performance**: Monitor serialization/deserialization overhead\n- **Versioning**: Handle structure evolution over time\n\n**AI guidance for complex structures:**\n- Provide clear examples in prompts\n- Use descriptive field names and types\n- Include validation requirements\n- Specify required vs optional fields\n\n**Common challenges:**\n- **AI consistency**: Ensuring AI follows complex schemas\n- **Performance**: Large nested objects can be slow to process\n- **Debugging**: Complex structures harder to troubleshoot\n- **Validation**: Multi-level validation complexity\n\n**Best practices:**\n- Start simple and add complexity gradually\n- Use composition over deep inheritance\n- Implement comprehensive validation\n- Provide clear examples to guide AI\n- Monitor performance impact of complex structures\n\n**Testing strategies:**\n- Unit test each level of nesting\n- Integration test full structure mapping\n- Performance test with realistic data sizes\n- Error test with malformed structures"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"Design a comprehensive microservices architecture for an e-commerce platform. Include service definitions, data models, API contracts, deployment strategies, and monitoring approaches.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/chat/structured/complex",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "chat", "structured", "complex"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"architectureDesign\": {\n    \"platformName\": \"E-Commerce Microservices Platform\",\n    \"version\": \"1.0\",\n    \"services\": [\n      {\n        \"name\": \"User Service\",\n        \"responsibility\": \"User management and authentication\",\n        \"endpoints\": [\n          {\n            \"path\": \"/api/users\",\n            \"method\": \"GET\",\n            \"description\": \"Get user list\"\n          },\n          {\n            \"path\": \"/api/users/{id}\",\n            \"method\": \"GET\",\n            \"description\": \"Get user by ID\"\n          }\n        ],\n        \"dataModel\": {\n          \"entities\": [\"User\", \"UserProfile\", \"UserPreferences\"],\n          \"relationships\": \"One-to-One User-UserProfile\"\n        },\n        \"deployment\": {\n          \"containerImage\": \"user-service:1.0\",\n          \"replicas\": 3,\n          \"resources\": {\n            \"cpu\": \"500m\",\n            \"memory\": \"512Mi\"\n          }\n        }\n      }\n    ],\n    \"dataFlow\": {\n      \"patterns\": [\"Event-Driven\", \"API Gateway\", \"CQRS\"],\n      \"messaging\": {\n        \"broker\": \"Apache Kafka\",\n        \"topics\": [\"user-events\", \"order-events\", \"inventory-events\"]\n      }\n    },\n    \"monitoring\": {\n      \"observability\": {\n        \"metrics\": \"Prometheus\",\n        \"logging\": \"ELK Stack\",\n        \"tracing\": \"Jaeger\"\n      },\n      \"healthChecks\": {\n        \"liveness\": \"/health/live\",\n        \"readiness\": \"/health/ready\"\n      }\n    }\n  },\n  \"outputType\": \"MicroservicesArchitecture\",\n  \"complexityInfo\": {\n    \"nestingLevels\": 4,\n    \"totalObjects\": 15,\n    \"arrayFields\": 6,\n    \"structureValidated\": true\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Complex nested structure exists\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('architectureDesign');",
+                  "    pm.expect(jsonData.outputType).to.eql('MicroservicesArchitecture');",
+                  "});",
+                  "",
+                  "pm.test(\"Services array contains detailed objects\", function () {",
+                  "    var services = pm.response.json().architectureDesign.services;",
+                  "    pm.expect(services).to.be.an('array');",
+                  "    if (services.length > 0) {",
+                  "        var service = services[0];",
+                  "        pm.expect(service).to.have.property('name');",
+                  "        pm.expect(service).to.have.property('endpoints');",
+                  "        pm.expect(service).to.have.property('dataModel');",
+                  "        pm.expect(service).to.have.property('deployment');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Deep nesting is properly structured\", function () {",
+                  "    var design = pm.response.json().architectureDesign;",
+                  "    if (design.services && design.services.length > 0) {",
+                  "        var deployment = design.services[0].deployment;",
+                  "        pm.expect(deployment).to.have.property('resources');",
+                  "        pm.expect(deployment.resources).to.have.property('cpu');",
+                  "        pm.expect(deployment.resources).to.have.property('memory');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Complexity metadata is accurate\", function () {",
+                  "    var complexity = pm.response.json().complexityInfo;",
+                  "    pm.expect(complexity).to.have.property('nestingLevels');",
+                  "    pm.expect(complexity.nestingLevels).to.be.greaterThan(2);",
+                  "    pm.expect(complexity.structureValidated).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Structured output demonstrations with type-safe Java object mapping"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:8080');",
+          "}",
+          "",
+          "// Log request details for debugging",
+          "console.log('S6 Request URL:', pm.request.url.toString());",
+          "console.log('Request method:', pm.request.method);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test for all S6 requests",
+          "pm.test('Response time is reasonable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "// Log response details",
+          "console.log('S6 Response status:', pm.response.status);",
+          "console.log('S6 Response time:', pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

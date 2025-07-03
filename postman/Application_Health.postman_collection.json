@@ -1,0 +1,596 @@
+{
+  "info": {
+    "name": "Application Health",
+    "description": "Comprehensive health monitoring for all Spring AI Course modules\n\n## Learning Objectives\n- Understand health check patterns in microservices and modular applications\n- Learn Spring Boot Actuator integration for monitoring\n- Explore module-specific health indicators\n- Practice production monitoring and alerting patterns\n\n## Why Health Checks Are Critical\nHealth checks are essential for production applications, enabling:\n- **Load balancer integration**: Remove unhealthy instances from traffic\n- **Container orchestration**: Kubernetes liveness and readiness probes\n- **Monitoring and alerting**: Automated detection of service issues\n- **Debugging and troubleshooting**: Quick status overview across modules\n\n## Health Check Architecture\n- **Application-level**: Overall application health and configuration\n- **Module-level**: Individual feature health and dependencies\n- **Component-level**: Database, AI service, and external dependency health\n- **Custom indicators**: Business-specific health metrics\n\n## Production Monitoring Patterns\n- Centralized health dashboard\n- Automated alerting on health failures\n- Health check aggregation and correlation\n- Performance impact monitoring\n\n## Testing Prerequisites\n- Application running: `./mvnw spring-boot:run`\n- All modules properly configured\n- OpenAI API key available (for AI-dependent health checks)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "application-health",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "Application Level Health",
+      "item": [
+        {
+          "name": "Main Application Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Main application health endpoint providing overview of all modules.\n\n**Why application-level health is important:**\n- **Single entry point**: Quick overall status check\n- **Module aggregation**: Summary of all module health states\n- **Load balancer integration**: Simple UP/DOWN status for traffic routing\n- **Operational overview**: High-level view for operations teams\n\n**Health check implementation patterns:**\n- **Composite health indicator**: Aggregates multiple module health checks\n- **Fast response**: Should respond quickly even under load\n- **Dependency awareness**: Reflects critical dependency status\n- **Graceful degradation**: Partial functionality vs complete failure\n\n**Production considerations:**\n- Configure appropriate timeouts for health checks\n- Include version information for deployment tracking\n- Monitor health check response times\n- Set up alerting for health check failures\n\n**Integration with infrastructure:**\n- **Kubernetes**: Use for liveness and readiness probes\n- **Load balancers**: Configure health check paths\n- **Monitoring tools**: Prometheus, Grafana, etc.\n- **Service mesh**: Istio, Linkerd health integration"
+          },
+          "response": [
+            {
+              "name": "Healthy Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"UP\",\n  \"application\": \"Spring AI Course - L4AiChat\",\n  \"version\": \"1.0.0\",\n  \"modules\": {\n    \"s1-multiturn\": \"UP\",\n    \"s2-components\": \"UP\",\n    \"s3-context\": \"UP\",\n    \"s4-statemanagement\": \"UP\",\n    \"s5-chatbot\": \"UP\",\n    \"s6-advanced\": \"UP\",\n    \"s7-advisors\": \"UP\",\n    \"s8-multimodel\": \"UP\",\n    \"s9-templates\": \"UP\"\n  },\n  \"dependencies\": {\n    \"openai-api\": \"CONNECTED\",\n    \"database\": \"UP\",\n    \"memory\": \"HEALTHY\"\n  },\n  \"timestamp\": \"2024-01-01T10:00:00Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Application health status is UP\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "});",
+                  "",
+                  "pm.test(\"All modules are healthy\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('modules');",
+                  "    ",
+                  "    // Check that all modules are UP",
+                  "    Object.keys(jsonData.modules).forEach(function(module) {",
+                  "        pm.expect(jsonData.modules[module]).to.eql('UP');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Dependencies are healthy\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('dependencies');",
+                  "    pm.expect(jsonData.dependencies).to.have.property('database');",
+                  "    pm.expect(jsonData.dependencies).to.have.property('memory');",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is acceptable for health check\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "pm.test(\"Application version is provided\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('version');",
+                  "    pm.expect(jsonData.version).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Application-level health checks for overall system status"
+    },
+    {
+      "name": "Module Health Checks",
+      "item": [
+        {
+          "name": "S1 Multi-Turn Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "health"]
+            },
+            "description": "S1 Multi-Turn conversation module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S1 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s1\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S2 Components Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s2/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s2", "health"]
+            },
+            "description": "S2 Components demonstration module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S2 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s2\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S3 Context Management Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "health"]
+            },
+            "description": "S3 Context Management module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S3 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s3\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S4 State Management Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s4/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s4", "health"]
+            },
+            "description": "S4 State Management module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S4 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s4\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S5 Complete Chatbot Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s5/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s5", "health"]
+            },
+            "description": "S5 Complete Chatbot module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S5 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s5\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S6 Advanced Chat Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s6/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s6", "health"]
+            },
+            "description": "S6 Advanced Chat module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S6 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s6\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S7 Custom Advisors Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s7/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s7", "health"]
+            },
+            "description": "S7 Custom Advisors module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S7 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s7\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S8 Multi-Model Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s8/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s8", "health"]
+            },
+            "description": "S8 Multi-Model module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S8 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s8\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "S9 Advanced Templates Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s9/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s9", "health"]
+            },
+            "description": "S9 Advanced Templates module health check."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"S9 module is healthy\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.include(\"s9\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Individual module health checks for detailed monitoring"
+    },
+    {
+      "name": "Health Check Workflows",
+      "item": [
+        {
+          "name": "Complete Health Check Suite",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Run complete health check workflow to verify all systems."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Initialize health check workflow",
+                  "console.log('Starting complete health check suite...');",
+                  "pm.environment.set('healthCheckStartTime', new Date().toISOString());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Main application health validation",
+                  "pm.test(\"Main application health check passed\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "});",
+                  "",
+                  "// Chain to module health checks",
+                  "pm.test(\"Prepare for module health checks\", function () {",
+                  "    var modules = pm.response.json().modules;",
+                  "    var moduleList = Object.keys(modules);",
+                  "    pm.environment.set('modulesToCheck', JSON.stringify(moduleList));",
+                  "    pm.environment.set('currentModuleIndex', '0');",
+                  "});",
+                  "",
+                  "// Set up next request in workflow",
+                  "var modules = JSON.parse(pm.environment.get('modulesToCheck') || '[]');",
+                  "if (modules.length > 0) {",
+                  "    var firstModule = modules[0].replace('-', '').replace('multiturn', '').replace('components', '').replace('context', '').replace('statemanagement', '').replace('chatbot', '').replace('advanced', '').replace('advisors', '').replace('multimodel', '').replace('templates', '');",
+                  "    console.log('Next: Check module health endpoints');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health Monitoring Dashboard Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Simulates health monitoring dashboard data collection.\n\n**Dashboard monitoring patterns:**\n- **Real-time status**: Current health state of all modules\n- **Historical data**: Health trends over time\n- **Alert integration**: Trigger notifications on health changes\n- **Dependency mapping**: Visualize service dependencies\n\n**Key metrics to track:**\n- Module availability percentage\n- Response time trends\n- Error rates and patterns\n- Resource utilization correlation\n\n**Production dashboard features:**\n- Color-coded health status visualization\n- Drill-down capability to module details\n- Historical health trend charts\n- Alert acknowledgment and escalation\n\n**Integration with monitoring tools:**\n- Prometheus metrics export\n- Grafana dashboard integration\n- PagerDuty/OpsGenie alerting\n- Slack/Teams notifications"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Dashboard data collection successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    ",
+                  "    // Simulate dashboard data processing",
+                  "    var dashboardData = {",
+                  "        timestamp: jsonData.timestamp,",
+                  "        overallStatus: jsonData.status,",
+                  "        moduleCount: Object.keys(jsonData.modules).length,",
+                  "        healthyModules: Object.values(jsonData.modules).filter(status => status === 'UP').length,",
+                  "        responseTime: pm.response.responseTime",
+                  "    };",
+                  "    ",
+                  "    pm.environment.set('dashboardData', JSON.stringify(dashboardData));",
+                  "    ",
+                  "    // Validate dashboard data",
+                  "    pm.expect(dashboardData.overallStatus).to.eql('UP');",
+                  "    pm.expect(dashboardData.healthyModules).to.eql(dashboardData.moduleCount);",
+                  "    pm.expect(dashboardData.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "pm.test(\"All modules available for dashboard\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var moduleCount = Object.keys(jsonData.modules).length;",
+                  "    pm.expect(moduleCount).to.be.greaterThan(5); // Expecting at least 6 modules",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Health check workflows and monitoring patterns"
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Simulated Unhealthy Module",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/nonexistent/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nonexistent", "health"]
+            },
+            "description": "Tests error handling for non-existent module health checks.\n\n**Why error scenario testing is important:**\n- **Graceful degradation**: System continues operating with partial functionality\n- **Alert validation**: Ensure monitoring systems detect failures correctly\n- **Recovery procedures**: Test restoration workflows\n- **Client resilience**: Validate client handling of health check failures\n\n**Common health check failure scenarios:**\n- Module temporarily unavailable\n- Database connectivity issues\n- External service dependencies down\n- Resource exhaustion (memory, CPU)\n- Configuration errors\n\n**Error response patterns:**\n- Appropriate HTTP status codes (503 Service Unavailable)\n- Detailed error information for debugging\n- Partial health information when possible\n- Clear indication of affected functionality\n\n**Production error handling:**\n- Circuit breaker patterns for failing dependencies\n- Retry logic with exponential backoff\n- Fallback to cached health status\n- Automated recovery procedures where possible"
+          },
+          "response": [
+            {
+              "name": "Module Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/nonexistent/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "nonexistent", "health"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Module not found\",\n  \"message\": \"Health check endpoint not available for module: nonexistent\",\n  \"timestamp\": \"2024-01-01T10:30:00Z\",\n  \"status\": 404,\n  \"path\": \"/api/nonexistent/health\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Non-existent module returns 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response is well-structured\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('timestamp');",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is descriptive\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('nonexistent');",
+                  "    pm.expect(jsonData.message).to.include('Health check endpoint');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Error scenarios and failure handling for health checks"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:8080');",
+          "}",
+          "",
+          "// Log health check request",
+          "console.log('Health Check Request URL:', pm.request.url.toString());",
+          "console.log('Request Time:', new Date().toISOString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global health check validation",
+          "pm.test('Health check response time is acceptable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(10000);",
+          "});",
+          "",
+          "// Log health check results",
+          "console.log('Health Check Response Status:', pm.response.status);",
+          "console.log('Health Check Response Time:', pm.response.responseTime + 'ms');",
+          "",
+          "// Track health check metrics",
+          "if (pm.response.status === 200) {",
+          "    console.log('✅ Health check passed');",
+          "} else {",
+          "    console.log('❌ Health check failed with status:', pm.response.status);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,763 @@
+{
+  "info": {
+    "name": "S1 Multi-Turn Chat",
+    "description": "Module S1: Multi-turn conversations demonstrating ChatModel vs ChatClient patterns\n\n## Learning Objectives\n- Understand the difference between ChatModel and ChatClient APIs\n- Learn single-turn vs multi-turn conversation patterns\n- Explore OpenAI configuration options\n- Practice conversation state management\n\n## Why This Module Exists\nThis module introduces the fundamental concepts of Spring AI by contrasting low-level ChatModel with high-level ChatClient APIs. It demonstrates why ChatClient is preferred for most use cases while showing when ChatModel might be appropriate.\n\n## Testing Notes\n- Run the application first: `./mvnw spring-boot:run`\n- Set your OpenAI API key in environment variables\n- Use the provided environment variables for dynamic conversation tracking",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "s1-multiturn-chat",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Module Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "health"]
+            },
+            "description": "Check if S1 module is healthy and ready to process requests."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"UP\",\n  \"module\": \"s1-multiturn\",\n  \"description\": \"Multi-turn conversation module\",\n  \"timestamp\": \"2024-01-01T10:00:00Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Module is healthy\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.eql(\"s1-multiturn\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Health check endpoints for module monitoring"
+    },
+    {
+      "name": "Single-Turn Chat",
+      "item": [
+        {
+          "name": "Chat with ChatModel (Low-level API)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello! Can you explain what Spring AI is?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/single-turn/model",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "single-turn", "model"]
+            },
+            "description": "Uses ChatModel directly - the low-level Spring AI API.\n\n**Why this approach:**\n- Direct access to OpenAI API\n- More control over request/response handling\n- Suitable for complex customizations\n\n**Trade-offs:**\n- More boilerplate code\n- Manual message handling\n- Less convenient for common use cases\n\n**When to use:**\n- Need fine-grained control over API calls\n- Custom response processing required\n- Integration with legacy systems"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Hello! Can you explain what Spring AI is?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/single-turn/model",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "single-turn", "model"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"Spring AI is a framework that provides abstractions for AI services...\",\n  \"model\": \"gpt-4\",\n  \"usage\": {\n    \"promptTokens\": 15,\n    \"completionTokens\": 45,\n    \"totalTokens\": 60\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains expected fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('response');",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is reasonable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat with ChatClient (High-level API)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What are the main benefits of using ChatClient over ChatModel?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/single-turn/client",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "single-turn", "client"]
+            },
+            "description": "Uses ChatClient - the high-level Spring AI API.\n\n**Why this approach:**\n- Fluent API design\n- Built-in best practices\n- Easier to use and maintain\n\n**Trade-offs:**\n- Less fine-grained control\n- Abstracts away some OpenAI specifics\n- May not cover all edge cases\n\n**When to use:**\n- Standard chat applications\n- Rapid prototyping\n- Most production use cases\n\n**Recommended approach** for new applications."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"What are the main benefits of using ChatClient over ChatModel?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/single-turn/client",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "single-turn", "client"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"ChatClient provides a more fluent and convenient API...\",\n  \"approach\": \"ChatClient\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response uses ChatClient approach\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('response');",
+                  "    pm.expect(jsonData).to.have.property('approach');",
+                  "    pm.expect(jsonData.approach).to.eql('ChatClient');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat with Custom Options",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Write a creative story about a robot learning to paint\",\n  \"temperature\": 0.9,\n  \"maxTokens\": 150\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/single-turn/with-options",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "single-turn", "with-options"]
+            },
+            "description": "Demonstrates custom OpenAI configuration options.\n\n**Configuration Options:**\n- **temperature**: Controls randomness (0.0-2.0)\n  - Lower = more focused and deterministic\n  - Higher = more creative and random\n- **maxTokens**: Maximum response length\n- **model**: Specific model to use\n\n**Why configure options:**\n- Different tasks need different creativity levels\n- Cost control through token limits\n- Performance optimization\n\n**Trade-offs:**\n- Higher temperature = more creative but less predictable\n- More tokens = better responses but higher cost\n- Newer models = better quality but higher cost"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Write a creative story about a robot learning to paint\",\n  \"temperature\": 0.9,\n  \"maxTokens\": 150\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/single-turn/with-options",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "single-turn", "with-options"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"response\": \"Once upon a time, in a small art studio, there lived a robot named Pixel...\",\n  \"options\": {\n    \"temperature\": 0.9,\n    \"maxTokens\": 150\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response includes custom options\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('response');",
+                  "    pm.expect(jsonData).to.have.property('options');",
+                  "    pm.expect(jsonData.options.temperature).to.eql(0.9);",
+                  "    pm.expect(jsonData.options.maxTokens).to.eql(150);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is creative (high temperature)\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(50);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Single-turn chat demonstrations comparing different API approaches"
+    },
+    {
+      "name": "Multi-Turn Conversations",
+      "item": [
+        {
+          "name": "Start New Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hi! I'm interested in learning about Spring AI. Can you help me understand the basics?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "start"]
+            },
+            "description": "Starts a new multi-turn conversation session.\n\n**Why multi-turn conversations:**\n- Maintains conversation context\n- Enables follow-up questions\n- More natural interaction patterns\n\n**Implementation approach:**\n- Server-side session management\n- Conversation ID tracking\n- Message history preservation\n\n**Key learning:** This demonstrates the foundation of stateful chat applications."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Hi! I'm interested in learning about Spring AI. Can you help me understand the basics?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/multi-turn/start",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "multi-turn", "start"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"response\": \"Hello! I'd be happy to help you learn about Spring AI...\",\n  \"messageCount\": 1\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains conversation ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('conversationId');",
+                  "    pm.expect(jsonData.conversationId).to.be.a('string');",
+                  "    pm.expect(jsonData.conversationId).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);",
+                  "    ",
+                  "    // Store conversation ID for subsequent requests",
+                  "    pm.environment.set('conversationId', jsonData.conversationId);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('response');",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Message count is 1\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.messageCount).to.eql(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Continue Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"That's helpful! Can you give me a concrete example of how to use ChatClient?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/continue/{{conversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "continue", "{{conversationId}}"]
+            },
+            "description": "Continues an existing conversation with context awareness.\n\n**Context Preservation:**\n- Previous messages remembered\n- Conversation flow maintained\n- Natural follow-up questions possible\n\n**Implementation Details:**\n- Uses conversation ID from previous request\n- Server maintains message history\n- AI model receives full conversation context\n\n**Learning Objective:** Understanding how conversation state enables more sophisticated interactions."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"That's helpful! Can you give me a concrete example of how to use ChatClient?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/multi-turn/continue/550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "multi-turn", "continue", "550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"response\": \"Certainly! Here's a concrete example of using ChatClient...\",\n  \"messageCount\": 2\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation ID matches\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.conversationId).to.eql(pm.environment.get('conversationId'));",
+                  "});",
+                  "",
+                  "pm.test(\"Message count increased\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.messageCount).to.be.greaterThan(1);",
+                  "});",
+                  "",
+                  "pm.test(\"Response shows context awareness\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(0);",
+                  "    // Response should reference previous context",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('example') || response.includes('chatclient') || response.includes('certainly');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/conversations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "conversations"]
+            },
+            "description": "Retrieves a list of all active conversations.\n\n**Why this endpoint:**\n- Session management\n- Debugging and monitoring\n- User conversation history\n\n**Production considerations:**\n- Implement pagination for large datasets\n- Add user authentication/authorization\n- Consider privacy implications\n\n**Learning objective:** Understanding conversation lifecycle management."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/multi-turn/conversations",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "multi-turn", "conversations"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversations\": [\n    {\n      \"conversationId\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"messageCount\": 2,\n      \"startedAt\": \"2024-01-01T10:00:00Z\",\n      \"lastMessageAt\": \"2024-01-01T10:05:00Z\"\n    }\n  ],\n  \"totalCount\": 1\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains conversations list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('conversations');",
+                  "    pm.expect(jsonData.conversations).to.be.an('array');",
+                  "    pm.expect(jsonData).to.have.property('totalCount');",
+                  "    pm.expect(jsonData.totalCount).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Includes our conversation\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.conversations.length > 0) {",
+                  "        var conversation = jsonData.conversations[0];",
+                  "        pm.expect(conversation).to.have.property('conversationId');",
+                  "        pm.expect(conversation).to.have.property('messageCount');",
+                  "        pm.expect(conversation.messageCount).to.be.greaterThan(0);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Conversation History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/history/{{conversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "history", "{{conversationId}}"]
+            },
+            "description": "Retrieves the complete message history for a specific conversation.\n\n**Why conversation history:**\n- Debugging conversation flow\n- User experience (showing chat history)\n- Analytics and improvement\n\n**Implementation considerations:**\n- Message ordering (chronological)\n- Metadata inclusion (timestamps, roles)\n- Performance optimization for long conversations\n\n**Security note:** In production, ensure users can only access their own conversation history."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/multi-turn/history/550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "multi-turn", "history", "550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hi! I'm interested in learning about Spring AI. Can you help me understand the basics?\",\n      \"timestamp\": \"2024-01-01T10:00:00Z\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Hello! I'd be happy to help you learn about Spring AI...\",\n      \"timestamp\": \"2024-01-01T10:00:05Z\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"That's helpful! Can you give me a concrete example of how to use ChatClient?\",\n      \"timestamp\": \"2024-01-01T10:05:00Z\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Certainly! Here's a concrete example of using ChatClient...\",\n      \"timestamp\": \"2024-01-01T10:05:05Z\"\n    }\n  ],\n  \"messageCount\": 4\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains conversation history\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('conversationId');",
+                  "    pm.expect(jsonData).to.have.property('messages');",
+                  "    pm.expect(jsonData.messages).to.be.an('array');",
+                  "    pm.expect(jsonData).to.have.property('messageCount');",
+                  "});",
+                  "",
+                  "pm.test(\"Messages have proper structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.messages.length > 0) {",
+                  "        var message = jsonData.messages[0];",
+                  "        pm.expect(message).to.have.property('role');",
+                  "        pm.expect(message).to.have.property('content');",
+                  "        pm.expect(message).to.have.property('timestamp');",
+                  "        pm.expect(message.role).to.be.oneOf(['user', 'assistant', 'system']);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Message count matches array length\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.messageCount).to.eql(jsonData.messages.length);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "End Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s1/chat/multi-turn/{{conversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s1", "chat", "multi-turn", "{{conversationId}}"]
+            },
+            "description": "Ends a conversation and cleans up associated resources.\n\n**Why explicit conversation ending:**\n- Resource cleanup (memory, storage)\n- Clear user intent\n- Analytics (conversation completion rates)\n\n**Implementation considerations:**\n- Graceful resource cleanup\n- Confirmation of deletion\n- Audit logging\n\n**Alternative approaches:**\n- Automatic timeout-based cleanup\n- Soft deletion with retention periods\n- User-initiated vs system-initiated cleanup\n\n**Production considerations:** Implement proper cleanup policies to prevent resource leaks."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s1/chat/multi-turn/550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s1", "chat", "multi-turn", "550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Conversation ended successfully\",\n  \"conversationId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"endedAt\": \"2024-01-01T10:10:00Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation ended successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('ended successfully');",
+                  "    pm.expect(jsonData).to.have.property('conversationId');",
+                  "    pm.expect(jsonData).to.have.property('endedAt');",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation ID matches\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.conversationId).to.eql(pm.environment.get('conversationId'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Multi-turn conversation demonstrations showing stateful chat interactions"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:8080');",
+          "}",
+          "",
+          "// Log request details for debugging",
+          "console.log('Request URL:', pm.request.url.toString());",
+          "console.log('Conversation ID:', pm.environment.get('conversationId'));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test for all requests",
+          "pm.test('Response time is reasonable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "// Log response for debugging",
+          "console.log('Response status:', pm.response.status);",
+          "console.log('Response time:', pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "conversationId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

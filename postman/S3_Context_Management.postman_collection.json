@@ -1,0 +1,724 @@
+{
+  "info": {
+    "name": "S3 Context Management",
+    "description": "Module S3: Context management with in-memory and JDBC storage using MessageChatMemoryAdvisor\n\n## Learning Objectives\n- Understand conversation context preservation patterns\n- Learn MessageChatMemoryAdvisor implementation\n- Explore in-memory vs JDBC storage trade-offs\n- Master conversation lifecycle management\n- Practice advisor-based architecture patterns\n\n## Why This Module Exists\nThis module introduces the critical concept of conversation context management in AI applications. It demonstrates how to maintain conversation state across multiple interactions using Spring AI's advisor pattern, showing both in-memory and persistent storage approaches.\n\n## Key Architectural Decisions\n- **MessageChatMemoryAdvisor**: Uses Spring AI's advisor pattern for context management\n- **Dual storage modes**: Supports both in-memory (development) and JDBC (production)\n- **Conversation lifecycle**: Clear creation, interaction, and cleanup patterns\n- **Context boundaries**: Proper conversation isolation and state management\n\n## Testing Prerequisites\n- Application running: `./mvnw spring-boot:run`\n- For JDBC testing: `./mvnw spring-boot:run -Dspring.profiles.active=jdbc`\n- H2 Console available at: `http://localhost:8080/h2-console`\n- Valid OpenAI API key configured",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "s3-context-management",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Module Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "health"]
+            },
+            "description": "Verify S3 context management module health and storage configuration."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"UP\",\n  \"module\": \"s3-context\",\n  \"description\": \"Context management with MessageChatMemoryAdvisor\",\n  \"storageMode\": \"in-memory\",\n  \"advisorType\": \"MessageChatMemoryAdvisor\",\n  \"timestamp\": \"2024-01-01T10:00:00Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Module is healthy with context management\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"UP\");",
+                  "    pm.expect(jsonData.module).to.eql(\"s3-context\");",
+                  "    pm.expect(jsonData).to.have.property('advisorType');",
+                  "    pm.expect(jsonData.advisorType).to.eql('MessageChatMemoryAdvisor');",
+                  "});",
+                  "",
+                  "pm.test(\"Storage mode is configured\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('storageMode');",
+                  "    pm.expect(jsonData.storageMode).to.be.oneOf(['in-memory', 'jdbc']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Health monitoring for S3 context management module"
+    },
+    {
+      "name": "Chat Service Information",
+      "item": [
+        {
+          "name": "Get Chat Service Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "info"]
+            },
+            "description": "Retrieves information about the chat service configuration and capabilities.\n\n**Why service information endpoints are valuable:**\n- **Configuration visibility**: Understand current service setup\n- **Debugging support**: Verify advisor and storage configuration\n- **Integration testing**: Confirm service capabilities before use\n- **Monitoring**: Track service configuration in different environments\n\n**Key information provided:**\n- Storage backend type (in-memory vs JDBC)\n- Advisor configuration details\n- Conversation limits and policies\n- Feature availability status\n\n**Production use cases:**\n- Health monitoring and alerting\n- Configuration validation in CI/CD\n- Troubleshooting conversation issues\n- Capacity planning and resource monitoring\n\n**Best practices:**\n- Include version information for compatibility checking\n- Expose configuration without sensitive details\n- Use consistent format across all modules\n- Include operational metrics when available"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/info",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "info"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"serviceInfo\": {\n    \"name\": \"S3 Context Management Chat Service\",\n    \"version\": \"1.0.0\",\n    \"storageType\": \"in-memory\",\n    \"advisorConfiguration\": {\n      \"type\": \"MessageChatMemoryAdvisor\",\n      \"memorySize\": \"unlimited\",\n      \"persistenceMode\": \"session-based\"\n    },\n    \"features\": [\n      \"conversation-context\",\n      \"message-history\",\n      \"advisor-pattern\",\n      \"multi-turn-support\"\n    ],\n    \"limitations\": {\n      \"maxConversationLength\": \"token-limited\",\n      \"contextRetention\": \"session-lifetime\"\n    }\n  },\n  \"status\": \"active\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Service info contains essential details\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('serviceInfo');",
+                  "    pm.expect(jsonData.serviceInfo).to.have.property('name');",
+                  "    pm.expect(jsonData.serviceInfo).to.have.property('storageType');",
+                  "    pm.expect(jsonData.serviceInfo).to.have.property('advisorConfiguration');",
+                  "});",
+                  "",
+                  "pm.test(\"Advisor configuration is present\", function () {",
+                  "    var advisor = pm.response.json().serviceInfo.advisorConfiguration;",
+                  "    pm.expect(advisor).to.have.property('type');",
+                  "    pm.expect(advisor.type).to.eql('MessageChatMemoryAdvisor');",
+                  "});",
+                  "",
+                  "pm.test(\"Features include context management\", function () {",
+                  "    var features = pm.response.json().serviceInfo.features;",
+                  "    pm.expect(features).to.be.an('array');",
+                  "    pm.expect(features).to.include('conversation-context');",
+                  "    pm.expect(features).to.include('advisor-pattern');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Service information and configuration details"
+    },
+    {
+      "name": "Context-Aware Conversations",
+      "item": [
+        {
+          "name": "Start New Conversation with Context",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello! I'm working on a Spring Boot application and need help understanding how to implement proper context management in AI conversations. Can you guide me through the key concepts?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "new"]
+            },
+            "description": "Starts a new conversation with MessageChatMemoryAdvisor for context management.\n\n**Why MessageChatMemoryAdvisor is crucial:**\n- **Automatic context preservation**: No manual message history management\n- **Advisor pattern**: Clean separation of concerns\n- **Storage abstraction**: Works with different storage backends\n- **Token optimization**: Intelligent context pruning\n\n**How MessageChatMemoryAdvisor works:**\n1. Intercepts conversation requests\n2. Retrieves conversation history from storage\n3. Prepends history to current message\n4. Stores new message and response\n5. Manages context size and token limits\n\n**Advantages over manual context management:**\n- **Automatic**: No manual message array building\n- **Optimized**: Built-in token and context management\n- **Consistent**: Standardized context handling\n- **Scalable**: Works with persistent storage\n\n**Storage backend options:**\n- **In-memory**: Fast, session-based, development-friendly\n- **JDBC**: Persistent, production-ready, database-backed\n- **Custom**: Can implement custom storage providers\n\n**Trade-offs:**\n- **Abstraction**: Less control over exact context handling\n- **Complexity**: Additional advisor configuration\n- **Debugging**: Context management is less visible\n\n**Best practices:**\n- Use in-memory for development and testing\n- Use JDBC for production with conversation persistence\n- Monitor context size and token usage\n- Implement conversation cleanup policies"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Hello! I'm working on a Spring Boot application and need help understanding how to implement proper context management in AI conversations. Can you guide me through the key concepts?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/new",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "new"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"ctx-550e8400-e29b-41d4-a716-446655440000\",\n  \"response\": \"Hello! I'd be happy to guide you through context management in AI conversations using Spring AI...\",\n  \"contextInfo\": {\n    \"advisorType\": \"MessageChatMemoryAdvisor\",\n    \"storageBackend\": \"in-memory\",\n    \"messageCount\": 1,\n    \"contextSize\": \"initial\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation started with context info\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('conversationId');",
+                  "    pm.expect(jsonData.conversationId).to.match(/^ctx-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);",
+                  "    ",
+                  "    // Store conversation ID for subsequent requests",
+                  "    pm.environment.set('s3ConversationId', jsonData.conversationId);",
+                  "});",
+                  "",
+                  "pm.test(\"Context information is provided\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('contextInfo');",
+                  "    pm.expect(jsonData.contextInfo.advisorType).to.eql('MessageChatMemoryAdvisor');",
+                  "    pm.expect(jsonData.contextInfo.messageCount).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test(\"Response addresses context management\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    pm.expect(jsonData.response.length).to.be.greaterThan(50);",
+                  "    // Should mention context or conversation management",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('context') || response.includes('conversation') || response.includes('spring ai');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Continue Conversation with Preserved Context",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"That's really helpful! Can you now explain the difference between in-memory and JDBC storage for conversation context? Which should I choose for production?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/{{s3ConversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "{{s3ConversationId}}"]
+            },
+            "description": "Continues conversation with automatic context preservation via MessageChatMemoryAdvisor.\n\n**Context preservation in action:**\n- MessageChatMemoryAdvisor automatically retrieves previous messages\n- AI receives full conversation history for context-aware responses\n- No manual message management required\n- Conversation flow feels natural and coherent\n\n**Storage backend comparison:**\n\n**In-Memory Storage:**\n- **Pros**: Fast access, simple setup, no database required\n- **Cons**: Lost on restart, limited to single instance, not scalable\n- **Use cases**: Development, testing, temporary conversations\n- **Performance**: Excellent (RAM access)\n\n**JDBC Storage:**\n- **Pros**: Persistent, scalable, survives restarts, multi-instance support\n- **Cons**: Database dependency, slightly slower, more complex setup\n- **Use cases**: Production, long-term conversations, microservices\n- **Performance**: Good (database I/O)\n\n**Decision matrix for production:**\n- **Single instance, temporary chats**: In-memory acceptable\n- **Multiple instances**: JDBC required\n- **Conversation persistence**: JDBC required\n- **High availability**: JDBC required\n- **Audit requirements**: JDBC required\n\n**Migration path:**\n- Start with in-memory for development\n- Switch to JDBC before production deployment\n- Test both modes in staging environment\n- Monitor performance impact\n\n**Common pitfalls:**\n- Assuming in-memory will scale\n- Not testing JDBC performance under load\n- Forgetting to configure database connection pooling\n- Not implementing conversation cleanup policies"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"That's really helpful! Can you now explain the difference between in-memory and JDBC storage for conversation context? Which should I choose for production?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/ctx-550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "ctx-550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"ctx-550e8400-e29b-41d4-a716-446655440000\",\n  \"response\": \"Great question! Since you asked about context management earlier, I can build on that explanation...\",\n  \"contextInfo\": {\n    \"advisorType\": \"MessageChatMemoryAdvisor\",\n    \"storageBackend\": \"in-memory\",\n    \"messageCount\": 2,\n    \"contextSize\": \"growing\",\n    \"previousContext\": \"referenced\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation ID matches previous request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.conversationId).to.eql(pm.environment.get('s3ConversationId'));",
+                  "});",
+                  "",
+                  "pm.test(\"Message count increased\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.contextInfo.messageCount).to.be.greaterThan(1);",
+                  "});",
+                  "",
+                  "pm.test(\"Context preservation is evident\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.contextInfo).to.have.property('previousContext');",
+                  "    pm.expect(jsonData.contextInfo.previousContext).to.eql('referenced');",
+                  "});",
+                  "",
+                  "pm.test(\"Response shows context awareness\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    // Should reference previous conversation",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('since you asked') || response.includes('earlier') || response.includes('build on');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deep Context Follow-up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Perfect! Based on what you've explained about storage options, I think JDBC is right for my production needs. Can you give me specific configuration steps for setting up JDBC-based context storage?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/{{s3ConversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "{{s3ConversationId}}"]
+            },
+            "description": "Demonstrates deep context awareness across multiple conversation turns.\n\n**Deep context management benefits:**\n- **Coherent conversations**: AI remembers entire conversation flow\n- **Progressive learning**: Each response builds on previous exchanges\n- **Natural interaction**: Feels like talking to someone who remembers everything\n- **Complex problem solving**: Can handle multi-step problems across turns\n\n**MessageChatMemoryAdvisor context handling:**\n- Automatically includes full conversation history\n- Manages token limits by pruning old messages when necessary\n- Maintains conversation coherence across storage backends\n- Provides transparent context switching between in-memory and JDBC\n\n**Context size management strategies:**\n- **Sliding window**: Keep last N messages\n- **Token-based pruning**: Trim based on total token count\n- **Semantic importance**: Keep important messages, drop less relevant ones\n- **Summary compression**: Summarize old context to preserve key information\n\n**Production considerations:**\n- Monitor conversation length and token usage\n- Implement conversation expiration policies\n- Set up database cleanup jobs for old conversations\n- Consider conversation archival for long-term storage\n\n**Performance optimization:**\n- Use database indexing for conversation lookups\n- Implement connection pooling for JDBC access\n- Consider caching frequently accessed conversations\n- Monitor response times as conversations grow\n\n**Testing context preservation:**\n- Verify responses reference previous messages\n- Test context across application restarts (JDBC)\n- Validate conversation boundaries (different conversations isolated)\n- Ensure context pruning works correctly under token limits"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Perfect! Based on what you've explained about storage options, I think JDBC is right for my production needs. Can you give me specific configuration steps for setting up JDBC-based context storage?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/ctx-550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "ctx-550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"conversationId\": \"ctx-550e8400-e29b-41d4-a716-446655440000\",\n  \"response\": \"Excellent choice! Since you've decided on JDBC based on our discussion of production requirements...\",\n  \"contextInfo\": {\n    \"advisorType\": \"MessageChatMemoryAdvisor\",\n    \"storageBackend\": \"in-memory\",\n    \"messageCount\": 3,\n    \"contextSize\": \"full\",\n    \"conversationDepth\": \"deep\",\n    \"topicEvolution\": \"context-management -> storage-comparison -> jdbc-configuration\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Deep context is preserved\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.contextInfo.messageCount).to.eql(3);",
+                  "    pm.expect(jsonData.contextInfo.conversationDepth).to.eql('deep');",
+                  "});",
+                  "",
+                  "pm.test(\"Topic evolution is tracked\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.contextInfo).to.have.property('topicEvolution');",
+                  "    pm.expect(jsonData.contextInfo.topicEvolution).to.include('context-management');",
+                  "    pm.expect(jsonData.contextInfo.topicEvolution).to.include('jdbc-configuration');",
+                  "});",
+                  "",
+                  "pm.test(\"Response demonstrates deep awareness\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.response).to.be.a('string');",
+                  "    // Should reference the decision-making process",
+                  "    pm.expect(jsonData.response.toLowerCase()).to.satisfy(function(response) {",
+                  "        return response.includes('since you') || response.includes('decided') || response.includes('based on our discussion');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "End Conversation and Cleanup",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/{{s3ConversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "{{s3ConversationId}}"]
+            },
+            "description": "Ends conversation and triggers context cleanup via MessageChatMemoryAdvisor.\n\n**Why explicit conversation cleanup is important:**\n- **Resource management**: Free memory and storage resources\n- **Privacy**: Remove conversation data when no longer needed\n- **Performance**: Prevent unlimited growth of storage\n- **Compliance**: Support data retention policies\n\n**MessageChatMemoryAdvisor cleanup behavior:**\n- **In-memory**: Immediate removal from memory\n- **JDBC**: Database record deletion or marking as inactive\n- **Graceful handling**: No errors if conversation already cleaned up\n- **Audit trail**: Optional logging of cleanup operations\n\n**Cleanup strategies in production:**\n- **User-initiated**: Allow users to explicitly end conversations\n- **Timeout-based**: Automatic cleanup after inactivity period\n- **Policy-driven**: Cleanup based on conversation age or count\n- **Batch processing**: Scheduled cleanup jobs for old conversations\n\n**Storage-specific considerations:**\n\n**In-memory cleanup:**\n- Immediate memory release\n- No persistence of cleanup event\n- Lost on application restart anyway\n- Suitable for temporary conversations\n\n**JDBC cleanup:**\n- Database transaction for deletion\n- Optional soft deletion with timestamps\n- Audit trail capabilities\n- Supports data retention policies\n\n**Best practices:**\n- Implement cleanup confirmation responses\n- Log cleanup events for monitoring\n- Handle concurrent access during cleanup\n- Consider soft deletion for audit requirements\n- Test cleanup under load conditions\n\n**Common patterns:**\n- Cleanup on user logout\n- Cleanup after successful task completion\n- Cleanup when conversation becomes inactive\n- Bulk cleanup during maintenance windows"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/ctx-550e8400-e29b-41d4-a716-446655440000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "ctx-550e8400-e29b-41d4-a716-446655440000"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Conversation ended and context cleaned up successfully\",\n  \"conversationId\": \"ctx-550e8400-e29b-41d4-a716-446655440000\",\n  \"cleanupInfo\": {\n    \"advisorType\": \"MessageChatMemoryAdvisor\",\n    \"storageBackend\": \"in-memory\",\n    \"messagesRemoved\": 3,\n    \"cleanupType\": \"immediate\",\n    \"endedAt\": \"2024-01-01T10:15:00Z\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversation cleanup confirmed\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('cleaned up successfully');",
+                  "    pm.expect(jsonData).to.have.property('cleanupInfo');",
+                  "});",
+                  "",
+                  "pm.test(\"Cleanup information provided\", function () {",
+                  "    var cleanup = pm.response.json().cleanupInfo;",
+                  "    pm.expect(cleanup).to.have.property('messagesRemoved');",
+                  "    pm.expect(cleanup.messagesRemoved).to.be.greaterThan(0);",
+                  "    pm.expect(cleanup).to.have.property('cleanupType');",
+                  "    pm.expect(cleanup.cleanupType).to.eql('immediate');",
+                  "});",
+                  "",
+                  "pm.test(\"Advisor type confirmed\", function () {",
+                  "    var cleanup = pm.response.json().cleanupInfo;",
+                  "    pm.expect(cleanup.advisorType).to.eql('MessageChatMemoryAdvisor');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Context-aware conversation demonstrations with MessageChatMemoryAdvisor"
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Access Non-existent Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"This should fail because the conversation doesn't exist.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/nonexistent-conversation-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "nonexistent-conversation-id"]
+            },
+            "description": "Tests error handling for non-existent conversation access.\n\n**Why proper error handling is critical:**\n- **User experience**: Clear error messages help users understand issues\n- **Debugging**: Specific errors aid in troubleshooting\n- **Security**: Avoid exposing internal system details\n- **Resilience**: Graceful handling of edge cases\n\n**Common error scenarios in context management:**\n- Non-existent conversation ID\n- Expired or cleaned up conversations\n- Invalid conversation ID format\n- Storage backend connectivity issues\n- Permission/authorization failures\n\n**MessageChatMemoryAdvisor error handling:**\n- Validates conversation existence before processing\n- Returns appropriate HTTP status codes\n- Provides meaningful error messages\n- Logs errors for monitoring and debugging\n\n**Best practices for error responses:**\n- Use appropriate HTTP status codes (404 for not found)\n- Include helpful error messages without exposing internals\n- Provide error codes for programmatic handling\n- Log errors with sufficient context for debugging\n- Consider retry strategies for transient failures\n\n**Production considerations:**\n- Monitor error rates and patterns\n- Alert on unusual error spikes\n- Implement circuit breakers for storage failures\n- Provide fallback mechanisms when possible\n- Document error scenarios for API consumers"
+          },
+          "response": [
+            {
+              "name": "Error Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"This should fail because the conversation doesn't exist.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/nonexistent-conversation-id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "nonexistent-conversation-id"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Conversation not found\",\n  \"message\": \"No conversation found with ID: nonexistent-conversation-id\",\n  \"conversationId\": \"nonexistent-conversation-id\",\n  \"errorCode\": \"CONVERSATION_NOT_FOUND\",\n  \"timestamp\": \"2024-01-01T10:20:00Z\",\n  \"suggestion\": \"Start a new conversation using POST /api/s3/chat/new\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response is well-structured\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('errorCode');",
+                  "    pm.expect(jsonData.errorCode).to.eql('CONVERSATION_NOT_FOUND');",
+                  "});",
+                  "",
+                  "pm.test(\"Error provides helpful guidance\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('suggestion');",
+                  "    pm.expect(jsonData.suggestion).to.include('POST /api/s3/chat/new');",
+                  "});",
+                  "",
+                  "pm.test(\"Error includes conversation ID for reference\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('conversationId');",
+                  "    pm.expect(jsonData.conversationId).to.eql('nonexistent-conversation-id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Non-existent Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/s3/chat/already-deleted-conversation",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "s3", "chat", "already-deleted-conversation"]
+            },
+            "description": "Tests error handling for attempting to delete a non-existent conversation.\n\n**Idempotent deletion design:**\n- **DELETE operations should be idempotent**: Multiple deletions of same resource shouldn't cause errors\n- **Graceful handling**: Return success even if resource already deleted\n- **Clear messaging**: Indicate that resource was not found but operation completed\n\n**Alternative approaches:**\n1. **Return 404**: Strict REST semantics, resource not found\n2. **Return 200**: Idempotent behavior, operation succeeded\n3. **Return 204**: No content, operation completed\n\n**MessageChatMemoryAdvisor deletion patterns:**\n- Check conversation existence before deletion attempt\n- Handle both soft and hard deletion scenarios\n- Provide clear feedback about deletion result\n- Log deletion attempts for audit purposes\n\n**Production considerations:**\n- Implement consistent deletion behavior across all endpoints\n- Consider soft deletion for audit and recovery requirements\n- Monitor deletion patterns for suspicious activity\n- Provide bulk deletion capabilities for administrative use\n\n**Error vs Success scenarios:**\n- **404 approach**: More explicit about resource state\n- **200 approach**: Better for automation and scripting\n- **Choice depends on**: API design philosophy and client expectations"
+          },
+          "response": [
+            {
+              "name": "Error Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/s3/chat/already-deleted-conversation",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "s3", "chat", "already-deleted-conversation"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"Conversation not found for deletion\",\n  \"message\": \"Cannot delete conversation that does not exist: already-deleted-conversation\",\n  \"conversationId\": \"already-deleted-conversation\",\n  \"errorCode\": \"CONVERSATION_NOT_FOUND_FOR_DELETION\",\n  \"timestamp\": \"2024-01-01T10:25:00Z\",\n  \"note\": \"The conversation may have already been deleted or never existed\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Deletion error is specific\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('errorCode');",
+                  "    pm.expect(jsonData.errorCode).to.eql('CONVERSATION_NOT_FOUND_FOR_DELETION');",
+                  "});",
+                  "",
+                  "pm.test(\"Error message explains the situation\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('note');",
+                  "    pm.expect(jsonData.note).to.include('already been deleted');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Error handling scenarios for context management operations"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:8080');",
+          "}",
+          "",
+          "// Log request details for debugging",
+          "console.log('S3 Request URL:', pm.request.url.toString());",
+          "console.log('S3 Conversation ID:', pm.environment.get('s3ConversationId'));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test for all S3 requests",
+          "pm.test('Response time is reasonable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "// Log response details",
+          "console.log('S3 Response status:', pm.response.status);",
+          "console.log('S3 Response time:', pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "s3ConversationId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
