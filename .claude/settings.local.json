@@ -21,7 +21,10 @@
       "Bash(pkill:*)",
       "Bash(mv:*)",
       "Bash(git push:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(timeout:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

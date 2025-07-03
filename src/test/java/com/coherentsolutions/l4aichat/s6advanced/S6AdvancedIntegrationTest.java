@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = L4AiChatApplication.class)
+@SpringBootTest(classes = com.coherentsolutions.l4aichat.L4AiChatApplication.class)
 @AutoConfigureMockMvc
 class S6AdvancedIntegrationTest extends IntegrationTestBase {
 

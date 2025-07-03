@@ -10,7 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = TemplatesApplication.class)
+@SpringBootTest(classes = com.coherentsolutions.l4aichat.L4AiChatApplication.class)
 @AutoConfigureMockMvc
 class S9TemplatesIntegrationTest extends IntegrationTestBase {
 

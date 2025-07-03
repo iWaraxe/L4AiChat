@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = ComponentsApplication.class)
+@SpringBootTest(classes = com.coherentsolutions.l4aichat.L4AiChatApplication.class)
 @AutoConfigureMockMvc
 @Import(MockTestConfiguration.class)
 @ActiveProfiles("test")

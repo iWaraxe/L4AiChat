@@ -26,29 +26,22 @@ This project has been successfully upgraded to Spring AI 1.0.0 final release.
 
 ### 🔄 REMAINING TASKS
 4. **Enhancement**: Add comprehensive testing for all modules
-5. **Documentation**: Create module-specific README files
+5. **Documentation**: ✅ Create module-specific README files
 
 ## Project-Specific Run Commands
 
 ```bash
-# Run specific module applications
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s1multiturn.AiChatApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s2components.ComponentsApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s3context.ContextApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s4statemanagement.ChatbotApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s5chatbot.SpringAiChatbotApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s6advanced.AdvancedInteractionApplication
-
-# Run new module applications (s7-s9)
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s7advisors.AdvisorsApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s8multimodel.MultiModelApplication
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.s9templates.TemplatesApplication
-
 # Run main application (all modules available)
-./mvnw spring-boot:run -Dspring-boot.run.mainClass=com.coherentsolutions.l4aichat.L4AiChatApplication
+./mvnw spring-boot:run
 
 # Run with JDBC profile for persistent storage
-./mvnw spring-boot:run -Dspring-boot.run.profiles=jdbc
+./mvnw spring-boot:run -Dspring.profiles.active=jdbc
+
+# Build and run
+./mvnw clean package && java -jar target/L4AiChat-0.0.1-SNAPSHOT.jar
+
+# Run with specific OpenAI API key
+OPENAI_API_KEY=your_key_here ./mvnw spring-boot:run
 ```
 
 ## Module Architecture
@@ -95,8 +88,17 @@ All modules follow these REST endpoint patterns:
 
 ## Development Notes
 
-- Each module has its own Application class - run the specific one needed
-- Module-specific README files contain detailed API documentation
-- CORS is configured in s5 and s6 modules for frontend integration
-- Use `@EnableWebFlux` for streaming support in servlet applications
-EOF < /dev/null
+- **Unified Architecture**: Single main application with all modules integrated
+- **Centralized Configuration**: Spring AI beans configured in L4AiChatApplication
+- **Module-specific README files**: Detailed API documentation for each module
+- **CORS Configuration**: Enabled for frontend integration at http://localhost:3000
+- **Streaming Support**: WebFlux enabled for real-time response streaming
+- **Health Endpoints**: Each module has dedicated health checks at /api/s{n}/health
+
+## Configuration Features
+
+- **ChatClient.Builder**: Auto-configured for all service classes
+- **ChatClient**: Pre-configured with GPT-4 and temperature 0.7
+- **OpenAI Integration**: Automatic model and API key configuration
+- **Database Support**: H2 in-memory database for JDBC profile
+- **Profile Support**: Switch between default and JDBC profiles

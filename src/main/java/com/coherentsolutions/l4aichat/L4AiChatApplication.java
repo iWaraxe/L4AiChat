@@ -1,5 +1,8 @@
 package com.coherentsolutions.l4aichat;
 
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -33,5 +36,28 @@ public class L4AiChatApplication {
                         .allowCredentials(true);
             }
         };
+    }
+
+    /**
+     * Configure ChatClient.Builder bean for all modules
+     * This is required for service classes that use ChatClient
+     */
+    @Bean
+    public ChatClient.Builder chatClientBuilder(ChatModel chatModel) {
+        return ChatClient.builder(chatModel);
+    }
+
+    /**
+     * Configure ChatClient bean for health controllers and direct injection
+     */
+    @Bean
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder) {
+        return chatClientBuilder
+                .defaultSystem("You are a helpful AI assistant.")
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model("gpt-4")
+                        .temperature(0.7)
+                        .build())
+                .build();
     }
 }
