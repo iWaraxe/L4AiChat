@@ -1,0 +1,276 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  dependency-update:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Update Maven dependencies
+      run: |
+        echo "🔄 Checking for Maven dependency updates..."
+        ./mvnw versions:display-dependency-updates
+        ./mvnw versions:display-plugin-updates
+        
+        # Update to latest versions (be careful with this in production)
+        # ./mvnw versions:use-latest-versions -DallowMajorUpdates=false
+        # ./mvnw versions:use-latest-releases -DallowMajorUpdates=false
+
+    - name: Check for security vulnerabilities
+      run: |
+        echo "🔍 Checking for security vulnerabilities..."
+        ./mvnw org.owasp:dependency-check-maven:check || true
+
+    - name: Generate dependency report
+      run: |
+        echo "📊 Generating dependency report..."
+        ./mvnw dependency:tree > dependency-tree.txt
+        ./mvnw dependency:analyze > dependency-analysis.txt
+
+    - name: Create dependency update issue
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read dependency information
+          let dependencyTree = '';
+          let dependencyAnalysis = '';
+          
+          try {
+            dependencyTree = fs.readFileSync('dependency-tree.txt', 'utf8');
+            dependencyAnalysis = fs.readFileSync('dependency-analysis.txt', 'utf8');
+          } catch (error) {
+            console.log('Could not read dependency files:', error.message);
+          }
+          
+          // Create issue body
+          const issueBody = `
+          ## 📦 Weekly Dependency Update Report
+          
+          This is an automated report of available dependency updates.
+          
+          ### 🔍 How to Review
+          1. Check the dependency tree and analysis below
+          2. Review security vulnerabilities (if any)
+          3. Test updates in a separate branch
+          4. Update dependencies incrementally
+          
+          ### 📋 Dependency Tree
+          \`\`\`
+          ${dependencyTree.slice(0, 5000)}${dependencyTree.length > 5000 ? '\n... (truncated)' : ''}
+          \`\`\`
+          
+          ### 🔍 Dependency Analysis
+          \`\`\`
+          ${dependencyAnalysis.slice(0, 5000)}${dependencyAnalysis.length > 5000 ? '\n... (truncated)' : ''}
+          \`\`\`
+          
+          ### ⚡ Quick Actions
+          To update dependencies manually:
+          \`\`\`bash
+          # Check for updates
+          ./mvnw versions:display-dependency-updates
+          
+          # Update to latest releases (patch versions only)
+          ./mvnw versions:use-latest-releases -DallowMajorUpdates=false
+          
+          # Update to latest versions (including minor updates)
+          ./mvnw versions:use-latest-versions -DallowMajorUpdates=false
+          \`\`\`
+          
+          ### 🛡️ Security
+          - Review OWASP dependency check results
+          - Check for known vulnerabilities
+          - Update security-related dependencies first
+          
+          ---
+          *This issue was automatically created by the dependency update workflow*
+          `;
+          
+          // Check if there's already an open dependency update issue
+          const { data: issues } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            labels: 'dependencies'
+          });
+          
+          const existingIssue = issues.find(issue => 
+            issue.title.includes('Weekly Dependency Update Report')
+          );
+          
+          if (existingIssue) {
+            // Update existing issue
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: existingIssue.number,
+              body: issueBody
+            });
+            console.log(`Updated existing dependency update issue #${existingIssue.number}`);
+          } else {
+            // Create new issue
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📦 Weekly Dependency Update Report - ${new Date().toISOString().split('T')[0]}`,
+              body: issueBody,
+              labels: ['dependencies', 'maintenance']
+            });
+            console.log('Created new dependency update issue');
+          }
+
+  renovate-config:
+    name: Check Renovate Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create or update Renovate config
+      run: |
+        cat > .github/renovate.json << 'EOF'
+        {
+          "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+          "extends": [
+            "config:base",
+            "schedule:weekdays",
+            "group:allNonMajor"
+          ],
+          "timezone": "UTC",
+          "schedule": ["before 10am on monday"],
+          "packageRules": [
+            {
+              "matchPackageNames": ["org.springframework.boot"],
+              "groupName": "Spring Boot",
+              "reviewers": ["@owner"]
+            },
+            {
+              "matchPackageNames": ["org.springframework.ai"],
+              "groupName": "Spring AI",
+              "reviewers": ["@owner"]
+            },
+            {
+              "matchDepTypes": ["test"],
+              "groupName": "Test dependencies",
+              "automerge": true
+            },
+            {
+              "matchUpdateTypes": ["patch"],
+              "automerge": true,
+              "automergeType": "pr"
+            }
+          ],
+          "vulnerabilityAlerts": {
+            "enabled": true
+          },
+          "osvVulnerabilityAlerts": true,
+          "labels": ["dependencies"],
+          "assignees": ["@owner"],
+          "prHourlyLimit": 2,
+          "prConcurrentLimit": 5,
+          "branchPrefix": "renovate/",
+          "commitMessagePrefix": "chore: ",
+          "semanticCommits": "enabled"
+        }
+        EOF
+
+    - name: Validate Renovate config
+      uses: rinchsan/renovate-config-validator@v0.0.12
+      with:
+        pattern: '.github/renovate.json'
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run security audit
+      run: |
+        echo "🔒 Running security audit..."
+        
+        # Run OWASP Dependency Check
+        ./mvnw org.owasp:dependency-check-maven:check \
+          -DfailBuildOnCVSS=7 \
+          -DsuppressionsLocation=.github/dependency-check-suppressions.xml || true
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-audit-report
+        path: |
+          target/dependency-check-report.html
+          target/dependency-check-report.xml
+
+    - name: Create security issue on vulnerabilities
+      if: failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const issueBody = `
+          ## 🚨 Security Vulnerabilities Detected
+          
+          The automated security audit has detected vulnerabilities in project dependencies.
+          
+          ### 📋 Action Required
+          1. Review the security audit report (attached to workflow run)
+          2. Update vulnerable dependencies
+          3. If updates are not available, consider:
+             - Finding alternative dependencies
+             - Adding suppressions (with justification)
+             - Implementing mitigations
+          
+          ### 🔍 How to Review
+          \`\`\`bash
+          # Run local security check
+          ./mvnw org.owasp:dependency-check-maven:check
+          
+          # View report
+          open target/dependency-check-report.html
+          \`\`\`
+          
+          ### 📊 Report Location
+          Download the detailed report from the workflow artifacts.
+          
+          ---
+          *This issue was automatically created by the security audit workflow*
+          `;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🚨 Security Vulnerabilities Detected - ${new Date().toISOString().split('T')[0]}`,
+            body: issueBody,
+            labels: ['security', 'critical', 'dependencies']
+          });

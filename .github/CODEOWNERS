@@ -1,0 +1,38 @@
+# Code Owners for L4AiChat Spring AI Course
+
+# Global owners - these users will be requested for review on all PRs
+* @owner
+
+# Core application modules
+src/main/java/com/coherentsolutions/l4aichat/s*/ @owner
+
+# Security module requires security review
+src/main/java/com/coherentsolutions/l4aichat/security/ @owner @security-team
+
+# Docker and deployment configuration
+Dockerfile @owner @devops-team
+docker-compose*.yml @owner @devops-team
+docker/ @owner @devops-team
+scripts/ @owner @devops-team
+
+# CI/CD workflows require DevOps review
+.github/workflows/ @owner @devops-team
+
+# Documentation changes
+*.md @owner @docs-team
+docs/ @owner @docs-team
+
+# Configuration files
+src/main/resources/application*.properties @owner
+src/main/resources/application*.yml @owner
+
+# Test files
+src/test/ @owner
+
+# Build configuration
+pom.xml @owner
+.mvn/ @owner
+mvnw* @owner
+
+# GitHub configuration
+.github/ @owner

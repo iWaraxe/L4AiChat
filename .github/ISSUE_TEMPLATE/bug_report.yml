@@ -1,0 +1,148 @@
+name: Bug Report
+description: File a bug report to help us improve L4AiChat
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! 🐛
+        
+        Please provide as much detail as possible to help us understand and reproduce the issue.
+
+  - type: input
+    id: version
+    attributes:
+      label: L4AiChat Version
+      description: What version of L4AiChat are you running?
+      placeholder: "v1.0.0 or commit hash"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Affected Module
+      description: Which module is affected by this bug?
+      options:
+        - s1-multiturn (Basic multi-turn conversations)
+        - s2-components (Core Spring AI components)
+        - s3-context (Context management)
+        - s4-statemanagement (State management)
+        - s5-chatbot (REST API chatbot)
+        - s6-advanced (Advanced chat patterns)
+        - s7-advisors (Custom advisors)
+        - s8-multimodel (Multi-model AI)
+        - s9-templates (Prompt engineering)
+        - security-jwt-auth (Authentication)
+        - containerization-docker (Docker setup)
+        - Unknown/Multiple modules
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you running L4AiChat?
+      options:
+        - Local development
+        - Docker container
+        - Production deployment
+        - Testing environment
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "Describe what you expected to happen and what actually happened"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "A clear and concise description of what you expected to happen"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "A clear and concise description of what actually happened"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Please copy and paste any relevant log output
+      render: shell
+      placeholder: |
+        Paste your logs here...
+        
+        Application logs can be found:
+        - Docker: docker-compose logs l4aichat-app
+        - Local: Check console output or logs directory
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Relevant configuration details
+      render: yaml
+      placeholder: |
+        Spring profiles: 
+        Environment variables:
+        Docker version:
+        Java version:
+        OpenAI model:
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checks
+      description: Please verify you've completed these steps
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided all the requested information
+          required: true
+        - label: I have tested this with the latest version
+          required: true
+        - label: I have included relevant logs and configuration details
+          required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: |
+        - Screenshots (if applicable)
+        - Browser information (if web-related)
+        - Network configuration
+        - Any workarounds you've found
