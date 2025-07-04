@@ -1,0 +1,61 @@
+# Docker ignore file for L4AiChat
+
+# Build artifacts
+target/
+!target/L4AiChat-*.jar
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Test coverage
+coverage/
+
+# Node modules (if any frontend is added later)
+node_modules/
+
+# Temporary files
+tmp/
+temp/
+
+# Docker files (don't include docker-compose in image)
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Maven wrapper (we copy this explicitly)
+!.mvn/
+!mvnw
+!mvnw.cmd

@@ -1,0 +1,40 @@
+# Override file for development
+# Use: docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+version: '3.8'
+
+services:
+  l4aichat-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder  # Use development stage
+    volumes:
+      - .:/app
+      - /app/target  # Exclude target directory
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Debug port
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+  # Development database with persistent data
+  postgres:
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres/dev-data.sql:/docker-entrypoint-initdb.d/dev-data.sql
+
+  # Development Redis without persistence
+  redis:
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly no
+
+volumes:
+  postgres_dev_data:
+    driver: local

@@ -25,7 +25,8 @@
       "Bash(timeout:*)",
       "Bash(cat:*)",
       "Bash(curl:*)",
-      "Bash(afplay:*)"
+      "Bash(afplay:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }
